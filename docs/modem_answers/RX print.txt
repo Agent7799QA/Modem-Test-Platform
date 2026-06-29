@@ -1,0 +1,31 @@
+000001 12:49:23.764  print..
+000002 12:49:23.764  > ..
+000003 12:49:23.764  Drone RC (RX)..
+000004 12:49:23.764  Version: 4.0.10..
+000005 12:49:23.764  SN: ..
+000006 12:49:23.765  736bf1e1fce0f34d> ..
+000007 12:49:23.765  Current parameters:..Onboard LED is ON..
+000008 12:49:23.765  RC protocol: crsf..Radio:..
+000009 12:49:23.765  .Mode:...Long range..
+000010 12:49:23.766  .Link rate:..50...Central frequency:.3500 MHz...Channel code:..11..
+000011 12:49:23.766  .Attenuation:..30 dB..
+000012 12:49:23.766  .Module address:..33683..
+000013 12:49:23.767  .Network address:.56064..
+000014 12:49:23.768  .Binded address:..1111..
+000015 12:49:23.768  .Crystal trim:..111..
+000016 12:49:23.768  .FHSS mode:..0..
+000017 12:49:23.768  .DSSS mode:..0..
+000018 12:49:23.768  .EW tests:..enabled..
+000019 12:49:23.769  Serial:..
+000020 12:49:23.769  .Baudrate:..420000..
+000021 12:49:23.769  .Parity:...none...Stop bits:..1..
+000022 12:49:23.769  .Not inverted..
+000023 12:49:23.769  External interface:..
+000024 12:49:23.769  .Interface mode:..off..
+000025 12:49:23.769  External pins:..
+000026 12:49:23.769  .Pin 0:....Mode:.off..
+000027 12:49:23.769  ..Dependency:.13..
+000028 12:49:23.769  .Pin 1:..
+000029 12:49:23.769  ..Mode:.off..
+000030 12:49:23.769  ..Dependency:.14..
+

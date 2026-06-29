@@ -1,0 +1,94 @@
+000001 12:48:49.038  help..
+000002 12:48:49.038  ..
+000003 12:48:49.038  Drone RC (RX)..
+000004 12:48:49.038  Version: 4.0.10..
+000005 12:48:49.038  SN: 736bf1e1fce0f34d..
+000006 12:48:49.038  Commands list:..
+000007 12:48:49.038  .Statistic:     print `stat` or `stats` to get LQ and RSSI statistic.TTL Statistic: print `ttlstat` 
+000008 12:48:49.038  to get ttl statisticDisplay parameters:  print..
+000009 12:48:49.038  LED control:         led..
+000010 12:48:49.038  Reboot:              reboot..
+000011 12:48:49.038  Protocol:            protocol X, where X is crsf, sbus, mavlink (not supported yet) or raw..
+000012 12:48:49.038  Preset:              preset X where X is froglr, frogsw, frogsw+ or default..
+000013 12:48:49.038  Radio:..
+000014 12:48:49.038  .Mode:              mode X, where X is swarm+, swarm or longrange...Central frequency: freq X, where
+000015 12:48:49.039   X is 3500, 4000, 4500, 6500MHz...Channel code:      code X. where X is a value from 1 to 24, 16 MHz
+000016 12:48:49.039   (1-8), 64 MHz (9-24)...Attenuation:       attenuation X, where X from 0 to 30..
+000017 12:48:49.040  .Module address:    address X, where X is a value from 0 to 65534..
+000018 12:48:49.040  .Network address:   pan X, where X is a value from 0 to 65534..
+000019 12:48:49.041  .Rate:              rate X, where X is 5, 10, 25, 40 and 50 Hz..
+000020 12:48:49.042  .Binded address:    bind X, where X is the binded address with value from 0 to 65535 (65536 - means 
+000021 12:48:49.042  broadcast)..
+000022 12:48:49.042  .CW mode:           cwave, calibration purposes only..
+000023 12:48:49.043  .Crystal trim:      trim X, calibration purposes only...FHSS mode:         fhss X, frequence hopping
+000024 12:48:49.043  :....0 - disabled (use defined central frequency)..
+000025 12:48:49.044  ..1 - 3.5, 4.0 GHz..
+000026 12:48:49.044  ..2 - 4.0, 4.5 GHz..
+000027 12:48:49.044  ..3 - 3.5, 4.5 GHz..
+000028 12:48:49.044  ..4 - 3.5, 4.0, 4.5 GHz..
+000029 12:48:49.044  .DSSS mode:         dsss X, sequence hopping:..
+000030 12:48:49.045  ..0 - disabled (use defined channel code)..
+000031 12:48:49.045  ..1 - 16 MHz codes....2 - 64 MHz codes..
+000032 12:48:49.045  ..3 - 16 and 64 MHz codes..
+000033 12:48:49.045  ..4 - EXTRA codes..
+000034 12:48:49.045  ..7 - All codes..
+000035 12:48:49.045  .EW tests:          ewtests, if enabled - allow to pass RC commands in sacade receivers, otherwise o
+000036 12:48:49.045  nly link statistic..
+000037 12:48:49.045  Serial:..
+000038 12:48:49.046  .Baudrate:            baudrate X, where X is a baudrate (supported values: 57600, 100000, 115200, 40
+000039 12:48:49.046  0000, 420000)..
+000040 12:48:49.046  .Parity:              parity X, where X is none, even or odd..
+000041 12:48:49.047  .Stop bits:           stopbits X, where X is 1 or 2..
+000042 12:48:49.048  .Inversion:           invert..
+000043 12:48:49.048  Sync pin parameters:..
+000044 12:48:49.048  .Delay:               syncdelay X, delay, where X is time at ms (supported values: 0-255)..
+000045 12:48:49.048  External Mode:         extmode X, where X is off, bk, drop, rssi..
+000046 12:48:49.048  .BK parameters:..
+000047 12:48:49.048  ..Channal charge:    bkchcharge X, where X is a channal for start charge (supported values: 0-16, 0 
+000048 12:48:49.049  - off channal)..
+000049 12:48:49.049  ..Channal fuse:      bkchfuse X, where X is a channa
+000050 12:48:49.050  l for remove the fuse (supported values: 0-16, 0 - off channal)..
+000051 12:48:49.050  ..Level stick:       bklevelstick X, where X is a level stick for charge and fuse (supported values:
+000052 12:48:49.051   0-5000)..
+000053 12:48:49.051  ..Channal charge:    dropchcharge X, where X is a channal for start charge (supported values: 0-16, 
+000054 12:48:49.052  0 - off channal)..
+000055 12:48:49.052  ..Channal drop:      dropchdrop X, where X is a channal for remove the drop (supported values: 0-16,
+000056 12:48:49.053   0 - off channal)..
+000057 12:48:49.053  ..Channal choice:    dropchchoice X, where X is a channal for remove the choice (supported values: 0
+000058 12:48:49.053  -16, 0 - off channal)..
+000059 12:48:49.053  ..Level stick:       droplevelstick X, where X is a level stick for charge and drop (supported value
+000060 12:48:49.054  s: 0-5000)..
+000061 12:48:49.054  ..Level drop 1:      droplevel1 X, where X is a level 1 stick for choice (supported values: 0-5000).
+000062 12:48:49.055  .
+000063 12:48:49.055  ..Level drop 2:      droplevel2 X, where X is a level 2 stick for choice (supported values: 0-5000).
+000064 12:48:49.055  .
+000065 12:48:49.055  ..Level drop 3:      droplevel3 X, where X is a level 3 stick for choice (supported values: 0-5000).
+000066 12:48:49.056  .
+000067 12:48:49.056  .Rssi scanner parameters:..
+000068 12:48:49.056  ..Not yet implemented.....
+000069 12:48:49.056  Extra pins:..
+000070 12:48:49.056  .Modes:..
+000071 12:48:49.056  ..'off' - pin disabled....'pwm' - PWM with dependency with variable duty cycle from 0 to 100 percent
+000072 12:48:49.057   at 50 Hz..
+000073 12:48:49.057  ..'servo' - servo with range 1000us - 2000us at 50 Hz..
+000074 12:48:49.057  ..'mg90s' - servo with range 500us - 2500us at 50 Hz..
+000075 12:48:49.058  ..'syncout' or 'isyncout' - synchronization signal from RX (to avoid interference from other devices
+000076 12:48:49.058  )..
+000077 12:48:49.058  ..'debug' - debugging purpose..
+000078 12:48:49.058  .Pin 0 mode:..extpinmode0 X, where X is mode..
+000079 12:48:49.059  .Pin 0 dependency:.extpindep0 X, where X (pwm, servo, mg90s):..
+000080 12:48:49.059  ..1 - 16 AUX channel..
+000081 12:48:49.059  ..20 - pitch..
+000082 12:48:49.060  ..30 - roll..
+000083 12:48:49.060  ..40 - altitude..
+000084 12:48:49.060  ..60 - pitch + altitude..
+000085 12:48:49.060  ..70 - roll + altitude....negative values means inverted rotation.Pin 1 mode:..extpinmode1 X, where 
+000086 12:48:49.060  X is mode..
+000087 12:48:49.060  .Pin 1 dependency:.extpindep1 X, where X (pwm, servo, mg90s):..
+000088 12:48:49.061  ..1 - 16 AUX channel....20 - pitch..
+000089 12:48:49.061  ..30 - roll..
+000090 12:48:49.061  ..40 - altitude..
+000091 12:48:49.061  ..60 - pitch + altitude..
+000092 12:48:49.061  ..70 - 
+000093 12:48:49.062  roll + altitude..
+000094 12:48:49.062  ..negative values means inverted rotation> ..> 

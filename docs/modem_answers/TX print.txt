@@ -1,0 +1,34 @@
+000001 13:05:08.406  print..
+000002 13:05:08.406  > ..
+000003 13:05:08.406  Drone RC (TX)..
+000004 13:05:08.406  Version: 4.0.10..
+000005 13:05:08.406  SN: ..
+000006 13:05:08.406  736ae9eafcdfeb4d..
+000007 13:05:08.406  > Current parameters:..
+000008 13:05:08.406  Onboard LED is ON..
+000009 13:05:08.406  RC protocol: crsf..
+000010 13:05:08.406  Preset: .default..
+000011 13:05:08.406  Radio:..
+000012 13:05:08.406  .Mode:...Long range..
+000013 13:05:08.406  .Link rate:..50..
+000014 13:05:08.406  .Time slotting:..disabled..
+000015 13:05:08.406  .Retransmissions:.disable..
+000016 13:05:08.406  .Acknowledge:..enable..
+000017 13:05:08.407  .Max clients:..1..
+000018 13:05:08.407  .Central frequency:.4000 MHz..
+000019 13:05:08.407  .Channel code:..11..
+000020 13:05:08.407  .Attenuation:..0 dB..
+000021 13:05:08.407  .Module address:..32923..
+000022 13:05:08.408  .Network address:.56064..
+000023 13:05:08.408  .Crystal trim:..111..
+000024 13:05:08.408  .FHSS mode:..0..
+000025 13:05:08.408  .DSSS mode:..0..
+000026 13:05:08.408  Serial:..
+000027 13:05:08.408  .Baudrate:..420000..
+000028 13:05:08.408  .Parity:...none...Stop bits:..1..
+000029 13:05:08.409  .Not inverted..
+000030 13:05:08.409  External interface:..
+000031 13:05:08.409  External pins:..
+000032 13:05:08.409  .Pin 0:..
+000033 13:05:08.409  ..Mode:.debug..
+000034 13:05:08.409  ..Dependency:.13..

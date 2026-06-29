@@ -1,0 +1,51 @@
+000001 13:04:34.925  help..
+000002 13:04:34.925  ..
+000003 13:04:34.925  Drone RC (TX)..
+000004 13:04:34.925  Version: 4.0.10..
+000005 13:04:34.925  SN: 736ae9eafcdfeb4d..
+000006 13:04:34.925  Commands list:..
+000007 13:04:34.925  .Statistic:     print `stat` or `stats` to get LQ and RSSI statisticDisplay parameters:  print..
+000008 13:04:34.925  LED control:         led..
+000009 13:04:34.925  Reboot:              reboot..
+000010 13:04:34.925  Protocol:            protocol X, where X is crsf, sbus, mavlink (not supported yet) or raw..
+000011 13:04:34.926  Preset:              preset X where X is froglr, frogsw, frogsw+ or default..
+000012 13:04:34.926  Radio:...Mode:              mode X, where X is swarm+, swarm or longrange..
+000013 13:04:34.927  .Central frequency: freq X, where X is 3500, 4000, 4500, 6500MHz..
+000014 13:04:34.927  .Channel code:      code X. where X is a value from 1 to 24, 16 MHz (1-8), 64 MHz (9-24)..
+000015 13:04:34.928  .Attenuation:       attenuation X, where X from 0 to 30..
+000016 13:04:34.928  .Module address:    address X, where X is a value from 0 to 65534..
+000017 13:04:34.929  .Network address:   pan X, where X is a value from 0 to 65534..
+000018 13:04:34.929  .Rate:              rate X, where X is 5, 10, 25, 40 and 50 Hz..
+000019 13:04:34.929  .Acknowledge:       ack, on/off acknowledgements (only if TTL is off)..
+000020 13:04:34.930  .Retransmissions:   ttl, on/off retransmissions..
+000021 13:04:34.930  .CW mode:           cwave, calibration purposes only..
+000022 13:04:34.930  .Crystal trim:      trim X, calibration purposes only..
+000023 13:04:34.931  .FHSS mode:         fhss X, frequence hopping:..
+000024 13:04:34.931  ..0 - disabled (use defined central frequency)..
+000025 13:04:34.932  ..1 - 3.5, 4.0 GHz..
+000026 13:04:34.932  ..2 - 4.0, 4.5 GHz....3 - 3.5, 4.5 GHz..
+000027 13:04:34.932  ..4 - 3.5, 4.0, 4.5 GHz..
+000028 13:04:34.932  .DSSS mode:         dsss X, sequence hopping:..
+000029 13:04:34.933  ..0 - disabled (use defined channel code)..
+000030 13:04:34.933  ..1 - 16 MHz codes..
+000031 13:04:34.933  ..2 - 64 MHz codes..
+000032 13:04:34.933  ..3 - 16 and 64 MHz codes..
+000033 13:04:34.933  ..4 - EXTRA codes..
+000034 13:04:34.933  ..7 - All codes..
+000035 13:04:34.933  .Timeslot:          timeslot, controls time slotting routine..
+000036 13:04:34.934  Serial:..
+000037 13:04:34.934  .Baudrate:            baudrate X, where X is a baudrate (supported values: 57600, 100000, 115200, 40
+000038 13:04:34.935  0000, 420000)..
+000039 13:04:34.935  .Parity:              parity X, where X is none, even or odd..
+000040 13:04:34.935  .Stop bits:           stopbits X, where X is 1 or 2..
+000041 13:04:34.935  .Inversion:           invert..
+000042 13:04:34.936  Sync pin parameters:..
+000043 13:04:34.936  .Delay:               syncdelay X, delay, where X is time at ms (supported values: 0-255)..
+000044 13:04:34.936  Extra pins:..
+000045 13:04:34.936  .Modes:..
+000046 13:04:34.936  ..'off' - pin disabled..
+000047 13:04:34.936  ..'syncout' or 'isyncout' - s
+000048 13:04:34.937  ynchronization signal from RX (to avoid interference from other devices)..
+000049 13:04:34.937  ..'syncin' - transmit on rising edge..'debug' - debugging purpose..
+000050 13:04:34.938  .Pin 0 mode:..extpinmode0 X, where X is mode..
+000051 13:04:34.938  > ..> 

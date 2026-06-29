@@ -1,0 +1,93 @@
+000001 16:16:20.786  reboot..
+000002 16:16:20.786  > ESP-ROM:esp32s3-20210327..
+000003 16:16:20.787  Build:Mar 27 2021..
+000004 16:16:20.788  rst:0xc (RTC_SW_CPU_RST),boot:0xa (SPI_FAST_FLASH_BOOT)..
+000005 16:16:20.788  Saved PC:0x42036af8..
+000006 16:16:20.790  SPIWP:0xee..
+000007 16:16:20.791  mode:DIO, clock div:1..
+000008 16:16:20.792  load:0x3fce2820,len:0x15a0..
+000009 16:16:20.796  load:0x403c8700,len:0x4..
+000010 16:16:20.797  load:0x403c8704,len:0xce4..
+000011 16:16:20.799  load:0x403cb700,len:0x2ee0..
+000012 16:16:20.807  entry 0x403c8924..
+000013 16:16:20.812  I (26) boot: ESP-IDF v5.4.3-904-gacd7b505de 2nd stage bootloader..
+000014 16:16:20.812  I (26) boot: compile time Jun 10 2026 13:11:38..
+000015 16:16:20.813  I (26) boot: Multicore bootloader..
+000016 16:16:20.813  I (27) boot: chip revision: v0.2..
+000017 16:16:20.813  I (27) boot: efuse block revision: v1.4..
+000018 16:16:20.813  I (27) boot.esp32s3: Boot SPI Speed : 80MHz..
+000019 16:16:20.813  I (27) boot.esp32s3: SPI Mode       : DIO..
+000020 16:16:20.814  I (27) boot.esp32s3: SPI Flash Size : 4MB..
+000021 16:16:20.815  I (28) boot: Enabling RNG early entropy source.....
+000022 16:16:20.815  I (28) boot: Partition Table:..
+000023 16:16:20.815  I (28) boot: ## Label            Usage          Type ST Offset   Length..
+000024 16:16:20.815  I (28) boot:  0 nvs              WiFi data        01 02 00009000 00006000..
+000025 16:16:20.816  I (29) boot:  1 phy_init         RF data          01 01 0000f000 00001000..
+000026 16:16:20.816  I (29) boot:  2 factory          factory app      00 00 00010000 00100000..
+000027 16:16:20.817  I (29) boot:  3 main_storage     WiFi data        01 02 00110000 00019000..
+000028 16:16:20.817  I (30) boot: End of partition table..
+000029 16:16:20.817  I (30) esp_image: segment 0: paddr=00010020 vaddr=3c040020 size=16e6ch ( 93804) map..
+000030 16:16:20.834  I (47) esp_image: segment 1: paddr=00026e94 vaddr=3fc94700 size=02eb0h ( 11952) load..
+000031 16:16:20.837  I (50) esp_image: segment 2: paddr=00029d4c vaddr=40374000 size=062cch ( 25292) load..
+000032 16:16:20.842  I (56) esp_image: segment 3: paddr=00030020 vaddr=42000020 size=39b78h (236408) map..
+000033 16:16:20.885  I (98) esp_image: segment 4: paddr=00069ba0 vaddr=4037a2cc size=0a358h ( 41816) load..
+000034 16:16:20.894  I (108) esp_image: segment 5: paddr=00073f00 vaddr=50000000 size=0001ch (    28) load..
+000035 16:16:20.901  I (114) boot: Loaded app from partition at offset 0x10000..
+000036 16:16:20.901  I (115) boot: Disabling RNG early entropy source.....
+000037 16:16:20.902  .[0;32mI (115) cpu_start: Multicore app.[0m..
+000038 16:16:20.911  .[0;32mI (124) cpu_start: Pro cpu start user code.[0m..
+000039 16:16:20.911  .[0;32mI (124) cpu_start: cpu freq: 240000000 Hz.[0m..
+000040 16:16:20.911  .[0;32mI (125) app_init: Application information:.[0m..
+000041 16:16:20.912  .[0;32mI (125) app_init: Project name:     sk3_rx_4.0.10.[0m..
+000042 16:16:20.912  .[0;32mI (125) app_init: App version:      4.0.10.[0m..
+000043 16:16:20.912  .[0;32mI (125) app_init: Compile time:     Jun 10 2026 13:08:50.[0m..
+000044 16:16:20.912  .[0;32mI (125) app_init: ELF file SHA256:  0f0a7313a....[0m..
+000045 16:16:20.913  .[0;32mI (126) app_init: ESP-IDF:          v5.4.3-904-gacd7b505de.[0m..
+000046 16:16:20.913  .[0;32mI (126) efuse_init: Min chip rev:     v0.0.[0m..
+000047 16:16:20.913  .[0;32mI (126) efuse_init: Max chip rev:     v0.99 .[0m..
+000048 16:16:20.913  .[0;32mI (126) efuse_init: Chip rev:         v0.2.[0m..
+000049 16:16:20.913  .[0;32mI (126) heap_init: Initializing. RAM available for dynamic allocation:.[0m..
+000050 16:16:20.914  .[0;32mI (127) heap_init: At 3FC98570 len 000511A0 (324 KiB): RAM.[0m..
+000051 16:16:20.914  .[0;32mI (127) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM.[0m..
+000052 16:16:20.914  .[0;32mI (127) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM.[0m..
+000053 16:16:20.914  .[0;32mI (127) heap_init: At 600FE000 len 00001FE8 (7 KiB): RTCRAM.[0m..
+000054 16:16:20.915  .[0;32mI (128) spi_flash: detected chip: generic.[0m..
+000055 16:16:20.916  .[0;32mI (129) spi_flash: flash io: dio.[0m..
+000056 16:16:20.916  .[0;32mI (129) sleep_gpio: Configure to isolate all GPIO pins in sleep state.[0m..
+000057 16:16:20.916  .[0;32mI (129) sleep_gpio: Enable automatic switching of GPIO sleep configuration.[0m..
+000058 16:16:20.917  .[0;32mI (130) main_task: Started on CPU0.[0m..
+000059 16:16:20.917  .[0;32mI (131) main_task: Calling app_main().[0m..
+000060 16:16:20.917  .[0;32mI (131) main_task: Returned from app_main().[0m..
+000061 16:16:20.927  .[0;32mI (141) Flash: opened: 0.[0m..
+000062 16:16:20.927  .[0;32mI (141) Flash: opened: 0.[0m..
+000063 16:16:20.929  .[0;32mI (143) Process: License key OK.[0m..
+000064 16:16:20.930  .[0;32mI (144) gpio: GPIO[21]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0
+000065 16:16:20.931   .[0m..
+000066 16:16:20.931  .[0;32mI (145) gpio: GPIO[37]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0
+000067 16:16:20.931   .[0m..
+000068 16:16:20.932  .[0;32mI (145) gpio: GPIO[38]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0
+000069 16:16:20.932   .[0m..
+000070 16:16:20.932  .[0;32mI (146) gpio: GPIO[16]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:1
+000071 16:16:20.933   .[0m..
+000072 16:16:20.933  .[0;32mI (147) gpio: GPIO[6]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+000073 16:16:20.934  .[0m..
+000074 16:16:20.934  .[0;32mI (148) gpio: GPIO[4]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+000075 16:16:20.935  .[0m..
+000076 16:16:20.935  .[0;32mI (149) gpio: GPIO[5]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+000077 16:16:20.936  .[0m..
+000078 16:16:20.937  .[0;32mI (151) uart: ESP_INTR_FLAG_IRAM flag not set while CONFIG_UART_ISR_IN_IRAM is enabled, flag 
+000079 16:16:20.938  updated.[0m..
+000080 16:16:20.938  .[0;32mI (152) uart: queue free spaces: 15.[0m..
+000081 16:16:20.939  .[0;32mI (153) gpio: GPIO[33]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0
+000082 16:16:20.940   .[0m..
+000083 16:16:20.940  .[0;32mI (154) gpio: GPIO[34]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0
+000084 16:16:20.940   .[0m..
+000085 16:16:20.941  .[0;32mI (154) gpio: GPIO[0]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:3 
+000086 16:16:20.941  .[0m..
+000087 16:16:20.942  .[0;32mI (155) gpio: GPIO[15]| InputEn: 0| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0
+000088 16:16:20.942   .[0m..
+000089 16:16:20.962  .[0;32mI (176) gpio: GPIO[15]| InputEn: 0| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0
+000090 16:16:20.964   .[0m....Drone RC (RX)..
+000091 16:16:20.971  Version: 4.0.10..
+000092 16:16:20.971  SN: 736ae9eafcdfeb4d..
+000093 16:16:20.971  > .[0;32mI (185) Process: Initialization done!.[0m..
