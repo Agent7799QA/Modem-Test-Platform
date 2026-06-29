@@ -1,0 +1,7 @@
+000001 16:48:01.009  stat..
+000002 16:48:01.009  > Uplink LQ: 0, Uplink RSSI: 130 dBm, Downlink LQ: 0, Downlink RSSI: 130 dBm..
+000003 16:48:01.009  ..
+000004 16:48:01.009  > 
+000005 16:48:07.416  stats..
+000006 16:48:07.416  > Uplink LQ: 0, Uplink RSSI: 130 dBm, Downlink LQ: 0, Downlink RSSI: 130 dBm....
+000007 16:48:07.416  > 

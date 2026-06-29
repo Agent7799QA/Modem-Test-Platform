@@ -5,99 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f0b81956-eb59-4dfc-a4f8-65769f7a17fc" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/ModemTestPlatform.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/01_vision/Vision.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/02_requirements/Requirements Specification.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/03_glossary/Glossary.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/04_domain/Domain Model.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/05_architecture/Architecture Diagrams.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/05_architecture/Software_Architecture.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/06_engine/Events.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/06_engine/Execution Context.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/06_engine/Step.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/06_engine/Test Engine.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/06_engine/TestConfiguration.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/06_engine/TestPlan.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/06_engine/TestRun.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/07_devices/Configuration.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/07_devices/Connection.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/07_devices/Device Adapter.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/07_devices/Device Manager.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/07_devices/Device.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/07_devices/Protocol.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/07_devices/State Machine.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/08_measurements/Analysis.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/08_measurements/Criterion.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/08_measurements/Measurement.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/08_measurements/Metric.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/08_measurements/Report.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/08_measurements/Verdict.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/Modem Test Platform Documentation.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/git.ignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/analysis/analyzer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/analysis/criterion.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/analysis/metric.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/analysis/verdict.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/cli/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/cli/main.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/core/constants.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/core/events.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/core/exceptions.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/core/interfaces.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/core/state.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/devices/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/devices/adapters/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/devices/adapters/base/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/devices/adapters/base/adapter.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/devices/adapters/crossfire/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/devices/adapters/crossfire/crossfire_adapter.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/devices/configuration.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/devices/connection.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/devices/device.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/devices/manager.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/devices/registry.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/engine/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/engine/execution_context.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/engine/scheduler.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/engine/step.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/engine/test_engine.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/engine/test_plan.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/engine/test_run.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/measurements/collector.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/measurements/measurement.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/measurements/storage.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/protocols/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/protocols/base/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/protocols/base/protocol.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/protocols/crossfire/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/protocols/crossfire/commands.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/protocols/crossfire/constants.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/protocols/crossfire/crossfire_protocol.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/protocols/crossfire/models/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/protocols/crossfire/models/sync_info.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/protocols/crossfire/parser.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/protocols/crossfire/sync_parser.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/reporting/generator.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/reporting/html.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/reporting/json.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/reporting/pdf.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/reporting/report.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/storage/workspace.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/transport/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/transport/serial/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/transport/serial/serial_transport.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/transport/serial_port.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/transport/tcp.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/transport/udp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/modem_answers/RX  led.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/modem_answers/RX after connect message.txt" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -114,6 +24,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "Agent7799QA"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Agent7799QA/Modem-Test-Platform",
+    "accountId": "af56e7cc-dd00-4b5d-830b-4bac33541e12"
+  }
+}]]></component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
       <entry key="MS100" value="1.0" />
@@ -173,10 +95,10 @@
       <entry key="W1" value="3.949224472628587" />
     </decayedShown>
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 1,
-  "fromUser": false
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1,
+  &quot;fromUser&quot;: false
+}</component>
   <component name="ProjectId" id="3FnqCLIFkHY8hSaP7jNf8jpsFaL" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
@@ -185,26 +107,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "master",
-    "junie.onboarding.icon.badge.shown": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\dev\ModemTestPlatform\src\modem_test_platform\transport\serial" />
@@ -229,6 +151,7 @@
       <option name="presentableId" value="Default" />
       <updated>1782721051551</updated>
       <workItem from="1782721052588" duration="9091000" />
+      <workItem from="1782740344814" duration="1201000" />
     </task>
     <servers />
   </component>
