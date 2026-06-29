@@ -6,7 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/modem_test_platform/transport" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/.venv" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.14 (ModemTestPlatform)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.14 (Modem-Test-Platform)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

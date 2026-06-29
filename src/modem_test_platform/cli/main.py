@@ -15,8 +15,16 @@ def main():
 
     ok, response = modem.send("help")
 
+    state = modem.read_link_state()
+
     print(ok)
     print(response)
+
+    print(state)
+    print(f"UL LQ   : {state.uplink_lq}")
+    print(f"UL RSSI : {state.uplink_rssi}")
+    print(f"DL LQ   : {state.downlink_lq}")
+    print(f"DL RSSI : {state.downlink_rssi}")
 
     modem.disconnect()
 
