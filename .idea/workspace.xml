@@ -4,14 +4,8 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f0b81956-eb59-4dfc-a4f8-65769f7a17fc" name="Changes" comment="v0.0.27202">
-      <change afterPath="$PROJECT_DIR$/docs/modem_answers/RX mode negative" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/modem_answers/RX mode positive" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/modem_answers/RX wrong freq" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/tests/test_crossfire_adapter.py" afterDir="false" />
+    <list default="true" id="f0b81956-eb59-4dfc-a4f8-65769f7a17fc" name="Changes" comment="v0.0.27203 tests implemented">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/devices/adapters/crossfire/crossfire_adapter.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/devices/adapters/crossfire/crossfire_adapter.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/protocols/crossfire/crossfire_protocol.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/protocols/crossfire/crossfire_protocol.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,61 +37,61 @@
 }</component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.0" />
-      <entry key="S2" value="1.0" />
-      <entry key="S5" value="1.0000000000066709" />
-      <entry key="S10" value="1.0000037408579985" />
-      <entry key="S30" value="1.0289322467820927" />
-      <entry key="S60" value="1.2881081225113222" />
-      <entry key="M2" value="1.9238427281319699" />
-      <entry key="M5" value="2.869892283001771" />
-      <entry key="M10" value="3.367831123126056" />
-      <entry key="M15" value="3.562605572569463" />
-      <entry key="M30" value="3.8832709070503832" />
-      <entry key="H1" value="5.480667155391183" />
-      <entry key="H2" value="10.215365171412245" />
-      <entry key="H4" value="16.73127990752401" />
-      <entry key="D1" value="27.72952869161483" />
-      <entry key="W1" value="30.503465376883863" />
+      <entry key="MS100" value="1.4175439597310957" />
+      <entry key="MS500" value="1.8533150806291365" />
+      <entry key="S2" value="2.993666549928337" />
+      <entry key="S5" value="4.866529116409548" />
+      <entry key="S10" value="6.172432660241762" />
+      <entry key="S30" value="8.443490272173364" />
+      <entry key="S60" value="10.541780343780973" />
+      <entry key="M2" value="13.081662304184581" />
+      <entry key="M5" value="16.51074836003138" />
+      <entry key="M10" value="18.487603630550964" />
+      <entry key="M15" value="19.455519185007443" />
+      <entry key="M30" value="21.10238004627824" />
+      <entry key="H1" value="23.36550504563964" />
+      <entry key="H2" value="28.123232405932637" />
+      <entry key="H4" value="35.087205899319635" />
+      <entry key="D1" value="47.96448319769556" />
+      <entry key="W1" value="51.38216674500978" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="0.0" />
-      <entry key="S2" value="0.0" />
-      <entry key="S5" value="0.0" />
-      <entry key="S10" value="0.0" />
-      <entry key="S30" value="4.0442437448068875E-152" />
-      <entry key="S60" value="2.908674487314492E-76" />
-      <entry key="M2" value="2.6532365351302924E-38" />
-      <entry key="M5" value="1.7285536705760625E-15" />
-      <entry key="M10" value="7.140158431459252E-8" />
-      <entry key="M15" value="2.477290860737733E-5" />
-      <entry key="M30" value="0.008611991911157453" />
-      <entry key="H1" value="0.16069377289052306" />
-      <entry key="H2" value="0.6942750563533386" />
-      <entry key="H4" value="1.4431757797673237" />
-      <entry key="D1" value="2.6555424708049813" />
-      <entry key="W1" value="2.9481825588810477" />
+      <entry key="MS100" value="5.301270029171674E-190" />
+      <entry key="MS500" value="1.3959732361656705E-38" />
+      <entry key="S2" value="3.5747176316326495E-10" />
+      <entry key="S5" value="2.1123305905450298E-4" />
+      <entry key="S10" value="0.020997029396401246" />
+      <entry key="S30" value="0.5364461875691602" />
+      <entry key="S60" value="1.2554153425756716" />
+      <entry key="M2" value="1.9353661654292533" />
+      <entry key="M5" value="2.515855496012598" />
+      <entry key="M10" value="2.7469721905950246" />
+      <entry key="M15" value="2.8287804070012217" />
+      <entry key="M30" value="2.9154280721095738" />
+      <entry key="H1" value="3.039862514892806" />
+      <entry key="H2" value="3.4789241699260804" />
+      <entry key="H4" value="4.214815981391802" />
+      <entry key="D1" value="5.582433417237097" />
+      <entry key="W1" value="5.936484100712778" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.9526379980439373" />
-      <entry key="MS500" value="0.9903428719330246" />
-      <entry key="S2" value="0.9975769252644544" />
-      <entry key="S5" value="0.9990300646455545" />
-      <entry key="S10" value="0.9995186500064809" />
-      <entry key="S30" value="1.0287568405932774" />
-      <entry key="S60" value="1.2879607606289756" />
-      <entry key="M2" value="1.9236973062075144" />
-      <entry key="M5" value="2.869791975594058" />
-      <entry key="M10" value="3.367770027469976" />
-      <entry key="M15" value="3.5625865049844028" />
-      <entry key="M30" value="3.8918374207689443" />
-      <entry key="H1" value="5.641178857455864" />
-      <entry key="H2" value="10.909295905255295" />
-      <entry key="H4" value="18.174113732616895" />
-      <entry key="D1" value="30.384969502935505" />
-      <entry key="W1" value="33.451631888562645" />
+      <entry key="MS100" value="1.3816059767076982" />
+      <entry key="MS500" value="1.8442338934129983" />
+      <entry key="S2" value="2.989948655249609" />
+      <entry key="S5" value="4.864236976881848" />
+      <entry key="S10" value="6.190304774758006" />
+      <entry key="S30" value="8.961989746441034" />
+      <entry key="S60" value="11.774631842392731" />
+      <entry key="M2" value="14.998836402221821" />
+      <entry key="M5" value="19.016856167294794" />
+      <entry key="M10" value="21.229195777288076" />
+      <entry key="M15" value="22.280590132268383" />
+      <entry key="M30" value="24.015880323643255" />
+      <entry key="H1" value="26.404299043265432" />
+      <entry key="H2" value="31.601417228355658" />
+      <entry key="H4" value="39.30148494101568" />
+      <entry key="D1" value="53.54677646052312" />
+      <entry key="W1" value="57.31862896822307" />
     </decayedShown>
   </component>
   <component name="ProblemsViewState">
@@ -275,7 +269,7 @@
       <workItem from="1782740344814" duration="1201000" />
       <workItem from="1782809420890" duration="52000" />
       <workItem from="1782809901746" duration="148000" />
-      <workItem from="1782810061093" duration="15804000" />
+      <workItem from="1782810061093" duration="16483000" />
     </task>
     <task id="LOCAL-00001" summary="v0.0.27201 connect and get config">
       <option name="closed" value="true" />
@@ -293,7 +287,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782824986661</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="v0.0.27203 tests implemented">
+      <option name="closed" value="true" />
+      <created>1782828053789</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1782828053789</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -313,11 +315,12 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="v0.0.27201 connect and get config" />
     <MESSAGE value="v0.0.27202" />
-    <option name="LAST_COMMIT_MESSAGE" value="v0.0.27202" />
+    <MESSAGE value="v0.0.27203 tests implemented" />
+    <option name="LAST_COMMIT_MESSAGE" value="v0.0.27203 tests implemented" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/ModemTestPlatform$main.coverage" NAME="main Coverage Results" MODIFIED="1782825881775" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/modem_test_platform/cli" />
-    <SUITE FILE_PATH="coverage/ModemTestPlatform$.coverage" NAME=" Coverage Results" MODIFIED="1782827786352" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
+    <SUITE FILE_PATH="coverage/ModemTestPlatform$.coverage" NAME=" Coverage Results" MODIFIED="1782828172420" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/ModemTestPlatform$modem_test.coverage" NAME="modem_test Coverage Results" MODIFIED="1782824182281" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/tests" />
     <SUITE FILE_PATH="coverage/ModemTestPlatform$test_crossfire_adapter.coverage" NAME="test_crossfire_adapter Coverage Results" MODIFIED="1782826520199" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/tests" />
   </component>
