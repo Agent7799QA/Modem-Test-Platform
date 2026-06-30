@@ -1,11 +1,11 @@
 class Commands:
 
-    HELP = "help"
+    PRINT = "print"
 
     STAT = "stat"
+
+    HELP = "help"
 
     VERSION = "version"
 
     REBOOT = "reboot"
-
-    TTLSTAT = "ttlstat"

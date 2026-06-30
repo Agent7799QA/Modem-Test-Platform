@@ -1,12 +1,15 @@
-from modem_test_platform.protocols.crossfire.parser import CrossfireParser
-from modem_test_platform.protocols.crossfire.parsers.link_state_parser import LinkStateParser
 from modem_test_platform.protocols.crossfire.commands import Commands
+from modem_test_platform.protocols.crossfire.parsers.print_parser import PrintParser
+from modem_test_platform.protocols.crossfire.parsers.stat_parser import StatParser
+
 
 class CrossfireAdapter:
 
     def __init__(self, protocol):
         self.protocol = protocol
-        self.parser = LinkStateParser()
+
+        self.print_parser = PrintParser()
+        self.stat_parser = StatParser()
 
     def connect(self):
         self.protocol.transport.open()
@@ -14,16 +17,14 @@ class CrossfireAdapter:
     def disconnect(self):
         self.protocol.transport.close()
 
-    def send(self, command: str):
+    def read_configuration(self):
 
-        response = self.protocol.send_command(command)
+        response = self.protocol.send_command(Commands.PRINT)
 
-        return (
-            CrossfireParser.is_success(response),
-            response,
-        )
+        return self.print_parser.parse(response)
 
     def read_link_state(self):
+
         response = self.protocol.send_command(Commands.STAT)
 
-        return self.parser.parse(response)
+        return self.stat_parser.parse(response)
