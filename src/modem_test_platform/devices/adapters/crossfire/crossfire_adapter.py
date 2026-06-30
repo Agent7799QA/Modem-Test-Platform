@@ -168,9 +168,9 @@ class CrossfireAdapter:
     # ========== Управление ==========
 
     def set_protocol(self, protocol: str) -> bool:
-        """Установить протокол (crsf, sbus, mavlink, raw)."""
-        if protocol not in ["crsf", "sbus", "mavlink", "raw"]:
-            raise ValueError(f"Not supported value: {protocol}. Supported: 'crsf', 'sbus', 'mavlink', 'raw'")
+        """Установить протокол (crsf_parser, sbus, mavlink, raw)."""
+        if protocol not in ["crsf_parser", "sbus", "mavlink", "raw"]:
+            raise ValueError(f"Not supported value: {protocol}. Supported: 'crsf_parser', 'sbus', 'mavlink', 'raw'")
 
         return self._send_command_and_verify(
             f"protocol {protocol}",

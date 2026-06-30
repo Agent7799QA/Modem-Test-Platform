@@ -2,6 +2,7 @@
 Тестирование работы с модемом через новую архитектуру
 """
 
+import argparse
 import logging
 import textwrap
 import serial.tools.list_ports
@@ -10,6 +11,9 @@ from modem_test_platform.transport.exceptions import TransportConnectionError
 from modem_test_platform.transport.serial.serial_transport import SerialTransport
 from modem_test_platform.protocols.crossfire.crossfire_protocol import CrossfireProtocol
 from modem_test_platform.devices.adapters.crossfire.crossfire_adapter import CrossfireAdapter
+
+# Импортируем команды телеметрии
+from modem_test_platform.cli.commands.telemetry_commands import add_telemetry_parser
 
 
 # Настройка логирования
@@ -62,10 +66,13 @@ def get_port_from_user() -> str:
             exit(0)
 
 
-def main() -> None:
+# ========== Команды для порта конфигурации ==========
+
+def cmd_configure(args):
+    """Команда: проверить подключение к модему."""
     logger.info("Запуск теста подключения к модему")
 
-    port = get_port_from_user()
+    port = args.port
 
     try:
         # Создание транспорта для порта управления (скорость 115200)
@@ -99,21 +106,57 @@ def main() -> None:
         modem.disconnect()
         logger.info("Отключено")
 
-
     except TransportConnectionError as e:
-
         logger.error(e)
-
         return 1
-
-
     except Exception:
-
         logger.exception("Неожиданная ошибка")
-
         return 1
 
     return 0
+
+
+# ========== Главная функция ==========
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Modem Test Platform - управление модемом и телеметрия"
+    )
+    subparsers = parser.add_subparsers(dest="command", help="Команды")
+
+    # Команда: configure - работа с портом конфигурации
+    parser_configure = subparsers.add_parser(
+        "configure",
+        help="Работа с портом конфигурации (115200 бод)"
+    )
+    parser_configure.add_argument(
+        "--port", "-p",
+        help="COM-порт (если не указан, будет запрошен)"
+    )
+    parser_configure.set_defaults(func=cmd_configure)
+
+    # Добавляем команды телеметрии
+    add_telemetry_parser(subparsers)
+
+    # Разбираем аргументы
+    args = parser.parse_args()
+
+    if args.command is None:
+        parser.print_help()
+        return
+
+    # Если порт не указан для configure, запрашиваем
+    if args.command == "configure" and not args.port:
+        args.port = get_port_from_user()
+
+    # Выполняем команду
+    try:
+        result = args.func(args)
+        if result is not None:
+            exit(result)
+    except KeyboardInterrupt:
+        logger.info("Выход по Ctrl+C")
+        exit(0)
 
 
 if __name__ == "__main__":

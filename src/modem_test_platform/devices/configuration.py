@@ -37,7 +37,7 @@ class Configuration:
     inverted: Optional[bool] = None  # Инверсия сигнала
 
     # Protocol section
-    protocol: Optional[str] = None  # "crsf", "sbus", "mavlink", "raw"
+    protocol: Optional[str] = None  # "crsf_parser", "sbus", "mavlink", "raw"
     preset: Optional[str] = None  # "default", "froglr", "frogsw", "frogsw+"
 
     # External interface section

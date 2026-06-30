@@ -38,7 +38,7 @@ def test_read_configuration(adapter, mock_protocol):
 Version: 4.0.10
 SN: 736ae9eafcdfeb4d
 Onboard LED is OFF
-RC protocol: crsf
+RC protocol: crsf_parser
 Radio:
     Mode:           Long range
     Link rate:      50
@@ -265,7 +265,7 @@ def test_set_rate(adapter, mock_protocol, rate, expected_success):
 
 
 @pytest.mark.parametrize("protocol, expected_success", [
-    ("crsf", True),
+    ("crsf_parser", True),
     ("sbus", True),
     ("mavlink", True),
     ("raw", True),
