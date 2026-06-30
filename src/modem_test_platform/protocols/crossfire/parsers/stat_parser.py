@@ -1,11 +1,10 @@
 import re
 
-from modem_test_platform.protocols.crossfire.models.link_statistics import (
-    LinkStatistics,
-)
+from modem_test_platform.protocols.crossfire.models.link_state import LinkState
 
 
 class StatParser:
+    """Парсер ответа команды 'stat'."""
 
     PATTERN = re.compile(
         r"Uplink LQ:\s*(\d+),\s*"
@@ -15,14 +14,12 @@ class StatParser:
         re.IGNORECASE,
     )
 
-    def parse(self, response: str) -> LinkStatistics:
-
+    def parse(self, response: str) -> LinkState:
         match = self.PATTERN.search(response)
-
         if not match:
             raise ValueError("Cannot parse STAT response")
 
-        return LinkStatistics(
+        return LinkState(
             uplink_lq=int(match.group(1)),
             uplink_rssi=int(match.group(2)),
             downlink_lq=int(match.group(3)),

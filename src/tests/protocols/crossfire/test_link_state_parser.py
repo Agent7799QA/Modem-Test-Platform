@@ -1,5 +1,5 @@
-from modem_test_platform.protocols.crossfire.parsers.link_state_parser import (
-    LinkStateParser,
+from modem_test_platform.protocols.crossfire.parsers.stat_parser import (
+    StatParser,
 )
 
 
@@ -12,7 +12,7 @@ def test_parse_stat():
         "Downlink RSSI: -61 dBm"
     )
 
-    parser = LinkStateParser()
+    parser = StatParser()
 
     state = parser.parse(response)
 

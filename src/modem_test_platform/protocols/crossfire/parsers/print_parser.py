@@ -25,7 +25,8 @@ class PrintParser:
         start = text.find(marker)
         if start == -1:
             return None
-        value = text[start + len(marker):].strip()
+        # Берём до конца строки (до \n или \r)
+        value = text[start + len(marker):].splitlines()[0].strip()
         return value.replace(".", "").strip() if value else None
 
     @staticmethod
@@ -59,10 +60,16 @@ class PrintParser:
                 cfg.device_type = "RX"
             elif "Drone RC (TX)" in line:
                 cfg.device_type = "TX"
+            elif "Onboard LED is ON" in line:
+                cfg.led_state = True
+            elif "Onboard LED is OFF" in line:
+                cfg.led_state = False
             elif line.startswith("Version:"):
                 cfg.version = line.split(":", 1)[1].strip()
             elif line.startswith("SN:"):
                 value = line.split(":", 1)[1].strip()
+                # Удаляем символы > и пробелы из SN (модем вставляет > в середину)
+                value = value.replace(">", "").replace(" ", "")
                 if value:
                     cfg.serial_number = value
 
@@ -119,8 +126,21 @@ class PrintParser:
 
     def _parse_external_section(self, cfg: Configuration, section: str) -> None:
         """Парсинг секции External Interface."""
-        # Можно добавить парсинг pin'ов, если нужно
-        pass
+        # Interface mode
+        if "Interface mode:" in section:
+            cfg.ext_mode = self._get_string(section, "Interface mode:")
+
+        # Pin 0
+        pin0_section = self._extract_section(section, "Pin 0:", "Pin 1:")
+        if pin0_section:
+            cfg.pin_0_mode = self._get_string(pin0_section, "Mode:")
+            cfg.pin_0_dependency = self._get_int(pin0_section, "Dependency:")
+
+        # Pin 1
+        pin1_section = self._extract_section(section, "Pin 1:", "")
+        if pin1_section:
+            cfg.pin_1_mode = self._get_string(pin1_section, "Mode:")
+            cfg.pin_1_dependency = self._get_int(pin1_section, "Dependency:")
 
     def parse(self, response: str) -> Configuration:
         cfg = Configuration(raw=response)

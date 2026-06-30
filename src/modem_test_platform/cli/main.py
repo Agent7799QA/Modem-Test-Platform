@@ -6,6 +6,7 @@ import logging
 import textwrap
 import serial.tools.list_ports
 
+from modem_test_platform.transport.exceptions import TransportConnectionError
 from modem_test_platform.transport.serial.serial_transport import SerialTransport
 from modem_test_platform.protocols.crossfire.crossfire_protocol import CrossfireProtocol
 from modem_test_platform.devices.adapters.crossfire.crossfire_adapter import CrossfireAdapter
@@ -67,7 +68,8 @@ def main() -> None:
     port = get_port_from_user()
 
     try:
-        transport = SerialTransport(port, 420000)
+        # Создание транспорта для порта управления (скорость 115200)
+        transport = SerialTransport(port=port, baudrate=115200, timeout=2.0)
         logger.debug("Транспорт создан для порта %s", port)
 
         protocol = CrossfireProtocol(transport)
@@ -76,10 +78,7 @@ def main() -> None:
         modem = CrossfireAdapter(protocol)
         logger.debug("Адаптер модема создан")
 
-        logger.info("Подключение к модему...")
-        modem.connect()
-        logger.info("Подключено к %s", port)
-
+        # Чтение конфигурации (автоматически открывает порт)
         logger.info("Чтение конфигурации...")
         config = modem.read_configuration()
         if config:
@@ -87,6 +86,7 @@ def main() -> None:
         else:
             logger.warning("Конфигурация не получена")
 
+        # Чтение состояния канала
         logger.info("Чтение состояния канала...")
         state = modem.read_link_state()
         if state:
@@ -94,12 +94,23 @@ def main() -> None:
         else:
             logger.warning("Состояние не получено")
 
+        # Отключение
         logger.info("Отключение от модема...")
         modem.disconnect()
         logger.info("Отключено")
 
-    except Exception as e:
-        logger.exception("Ошибка при работе с модемом: %s", e)
+
+    except TransportConnectionError as e:
+
+        logger.error(e)
+
+        return 1
+
+
+    except Exception:
+
+        logger.exception("Неожиданная ошибка")
+
         return 1
 
     return 0

@@ -1,53 +1,51 @@
 from dataclasses import dataclass, field
+from typing import Optional
 
 
 @dataclass
 class Configuration:
-    """Конфигурация модема."""
+    """Конфигурация модема, получаемая по команде print."""
 
-    # Сырой ответ
-    raw: str = ""
+    # Device section
+    device_type: Optional[str] = None  # "RX" или "TX"
+    version: Optional[str] = None
+    serial_number: Optional[str] = None
+    led_state: Optional[bool] = None  # Состояние светодиода (ON/OFF)
 
-    # ---------- Device ----------
-    device_type: str | None = None          # "TX" или "RX"
-    version: str | None = None              # версия прошивки
-    serial_number: str | None = None        # серийный номер
+    # Radio section
+    mode: Optional[str] = None  # "Long range", "swarm", "swarm+"
+    link_rate: Optional[int] = None  # 5, 10, 25, 40, 50 Hz
+    frequency: Optional[int] = None  # 3500, 4000, 4500, 6500 MHz
+    channel_code: Optional[int] = None  # 1-24
+    attenuation: Optional[int] = None  # 0-30 dB
+    module_address: Optional[int] = None  # 0-65534
+    network_address: Optional[int] = None  # 0-65534 (PAN)
+    bind_address: Optional[int] = None  # 0-65534
+    crystal_trim: Optional[int] = None  # Калибровка (не трогать)
+    fhss: Optional[int] = None  # 0-4
+    dsss: Optional[int] = None  # 0-7 (только 0-3 рабочие)
+    time_slotting: Optional[bool] = None  # Временное деление
+    retransmissions: Optional[bool] = None  # Ретрансляции (TTL)
+    acknowledge: Optional[bool] = None  # Подтверждения
+    max_clients: Optional[int] = None  # Максимум клиентов
+    ew_tests: Optional[bool] = None  # Режим РЭБ тестов
 
-    # ---------- Protocol ----------
-    protocol: str | None = None             # crsf, sbus, mavlink, raw
-    preset: str | None = None               # default, custom и т.д.
+    # Serial section
+    baudrate: Optional[int] = None
+    parity: Optional[str] = None  # "none", "even", "odd"
+    stop_bits: Optional[int] = None  # 1 или 2
+    inverted: Optional[bool] = None  # Инверсия сигнала
 
-    # ---------- Radio (общие) ----------
-    mode: str | None = None                 # longrange, swarm, swarm+, 100kbps
-    link_rate: int | None = None            # 5, 10, 25, 40, 50 Гц
-    frequency: int | None = None            # 3500, 4000, 4500, 6500 МГц
-    channel_code: int | None = None         # 1-24
-    attenuation: int | None = None          # 0-30 дБ
-    module_address: int | None = None       # 0-65534
-    network_address: int | None = None      # 0-65534
-    bind_address: int | None = None         # 0-65534 (только для RX)
-    crystal_trim: int | None = None         # 0-255
-    fhss: int | None = None                 # 0-4
-    dsss: int | None = None                 # 0-7
+    # Protocol section
+    protocol: Optional[str] = None  # "crsf", "sbus", "mavlink", "raw"
+    preset: Optional[str] = None  # "default", "froglr", "frogsw", "frogsw+"
 
-    # ---------- TX ----------
-    time_slotting: bool | None = None       # True/False
-    retransmissions: bool | None = None     # True/False
-    acknowledge: bool | None = None         # True/False
-    max_clients: int | None = None          # 1-8
+    # External interface section
+    ext_mode: Optional[str] = None  # "off", "bk", "drop", "rssi"
+    pin_0_mode: Optional[str] = None  # "off", "pwm", "servo", "mg90s", "syncout", "debug"
+    pin_0_dependency: Optional[int] = None  # 1-70 (AUX channel, pitch, roll, altitude)
+    pin_1_mode: Optional[str] = None
+    pin_1_dependency: Optional[int] = None
 
-    # ---------- RX ----------
-    ew_tests: bool | None = None            # True/False
-
-    # ---------- Serial ----------
-    baudrate: int | None = None             # 57600, 100000, 115200, 400000, 420000
-    parity: str | None = None               # none, even, odd
-    stop_bits: int | None = None            # 1, 2
-    inverted: bool = False                  # True/False
-
-    # ---------- External Interface ----------
-    ext_mode: str | None = None             # off, bk, drop, rssi
-    pin_0_mode: str | None = None           # off, pwm, servo, mg90s, syncout, debug
-    pin_0_dependency: int | None = None     # 1-70
-    pin_1_mode: str | None = None           # off, pwm, servo, mg90s, syncout, debug
-    pin_1_dependency: int | None = None     # 1-70
+    # Raw ответ от модема
+    raw: Optional[str] = None
