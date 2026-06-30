@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import time
 import logging
 
@@ -19,35 +17,42 @@ class CrossfireProtocol:
 
     def send_command(self, command: str) -> str:
         """Отправить команду модему."""
-        import time
+        logger.debug(f"Отправка команды: '{command}'")
 
         try:
             if not self.transport.is_open:
                 self.transport.open()
-                time.sleep(0.1)  # Дать время на инициализацию
         except TransportConnectionError as e:
-            raise TransportConnectionError(
-                f"Не удалось открыть порт для отправки команды '{command}': {e}"
-            ) from e
+            logger.error(f"Не удалось открыть порт для команды '{command}': {e}")
+            raise
 
         try:
             response = self.transport.send_command(command)
+            # Логируем ответ (обрезаем если слишком длинный)
+            if len(response) > 500:
+                logger.debug(f"Ответ на '{command}': {response[:500]}... (всего {len(response)} байт)")
+            else:
+                logger.debug(f"Ответ на '{command}': {response}")
         except TransportConnectionError as e:
             logger.warning(f"Ошибка при отправке команды '{command}': {e}")
             if self._reconnect():
+                logger.info(f"Повторная отправка команды '{command}' после переподключения")
                 response = self.transport.send_command(command)
                 if response.strip():
+                    logger.debug(f"Ответ на '{command}' после переподключения: {response[:200]}")
                     return response
             raise
 
         if response.strip():
             return response
 
-        logger.warning("Нет ответа на команду '%s'", command)
+        logger.warning(f"Нет ответа на команду '{command}'")
 
         if self._reconnect():
+            logger.info(f"Повторная отправка команды '{command}' после переподключения")
             response = self.transport.send_command(command)
             if response.strip():
+                logger.debug(f"Ответ на '{command}' после переподключения: {response[:200]}")
                 return response
 
         raise TransportConnectionError(
@@ -58,12 +63,18 @@ class CrossfireProtocol:
     def _check_connection(self) -> bool:
         """Проверить, жив ли модем через команду help."""
         try:
+            logger.debug("Проверка соединения с модемом...")
             self.transport.reset_input_buffer()
-            self.transport.write(b"help\n")
-            time.sleep(0.1)
+            self.transport.write(b"help\r\n")
+            time.sleep(0.2)
             response = self.transport.read(1024).decode("utf-8", errors="ignore")
-            return "Drone RC" in response
-        except Exception:
+            if "Drone RC" in response:
+                logger.debug("Соединение с модемом установлено")
+                return True
+            logger.warning("Модем не отвечает на help")
+            return False
+        except Exception as e:
+            logger.warning(f"Ошибка проверки соединения: {e}")
             return False
 
     def _reconnect(self) -> bool:
@@ -71,7 +82,7 @@ class CrossfireProtocol:
         for attempt, delay in enumerate(self.reconnect_config.delays, 1):
             logger.warning(
                 f"Попытка переподключения {attempt}/{len(self.reconnect_config.delays)} "
-                f"(ждем {delay:.0.5f}с)"
+                f"(ждем {delay:.1f}с)"
             )
             time.sleep(delay)
 

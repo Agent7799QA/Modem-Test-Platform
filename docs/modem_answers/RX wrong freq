@@ -1,0 +1,8 @@
+000001 16:39:33.452  ESP-ROM:esp32s3-20210327..
+000002 16:39:33.452  .[0;32mI (188) gpio: GPIO[21]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0
+000003 16:39:33.452   .[0m..
+000004 16:39:33.452  .[0;32mI (189) gpio: GPIO[37]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0
+000005 16:39:33.452   .[0m..
+000006 16:39:33.452  .[0;32mI (190) gpio: GPIO[38]| InputEn: 0|freq 3000..
+000007 16:39:33.460  > Not supported value: 3000..
+000008 16:39:33.461  ..>
