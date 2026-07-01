@@ -17,7 +17,7 @@ def test_connection(port: str, baudrate: int = 115200) -> None:
 
     try:
         ser = serial.Serial(port, baudrate, timeout=2.0)
-        time.sleep(0.1)
+        #time.sleep(0.1)
 
         # Очистить буферы
         ser.reset_input_buffer()
@@ -26,28 +26,28 @@ def test_connection(port: str, baudrate: int = 115200) -> None:
         # Тест 1: просто Enter
         logger.info("Тест 1: Отправка Enter (\\r\\n)")
         ser.write(b"\r\n")
-        time.sleep(0.1)
+        #time.sleep(0.1)
         response = ser.read(ser.in_waiting or 1024)
         logger.info(f"Ответ: {response}")
 
         # Тест 2: help
         logger.info("Тест 2: Отправка help")
         ser.write(b"help\r\n")
-        time.sleep(0.1)
+        #time.sleep(0.1)
         response = ser.read(4096)
         logger.info(f"Ответ: {response.decode('utf-8', errors='ignore')}")
 
         # Тест 3: print
         logger.info("Тест 3: Отправка print")
         ser.write(b"print\r\n")
-        time.sleep(0.1)
+        #time.sleep(0.1)
         response = ser.read(4096)
         logger.info(f"Ответ: {response.decode('utf-8', errors='ignore')}")
 
         # Тест 4: stat
         logger.info("Тест 4: Отправка stat")
         ser.write(b"stat\r\n")
-        time.sleep(0.1)
+        #time.sleep(0.1)
         response = ser.read(4096)
         logger.info(f"Ответ: {response.decode('utf-8', errors='ignore')}")
 

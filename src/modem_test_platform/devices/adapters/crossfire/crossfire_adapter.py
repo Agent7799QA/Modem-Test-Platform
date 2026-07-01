@@ -1,5 +1,6 @@
+import logging
 import time
-from typing import Optional
+from typing import Optional, Callable
 
 from modem_test_platform.devices.configuration import Configuration
 from modem_test_platform.protocols.crossfire.commands import Commands
@@ -7,9 +8,10 @@ from modem_test_platform.protocols.crossfire.parsers.print_parser import PrintPa
 from modem_test_platform.protocols.crossfire.parsers.stat_parser import StatParser
 from modem_test_platform.protocols.crossfire.parsers.ttlstat_parser import TtlStatParser
 
+logger = logging.getLogger(__name__)
+
 
 class CrossfireAdapter:
-
     def __init__(self, protocol):
         self.protocol = protocol
         self.print_parser = PrintParser()
@@ -22,251 +24,212 @@ class CrossfireAdapter:
     def disconnect(self):
         self.protocol.transport.close()
 
+    def is_connected(self) -> bool:
+        return self.protocol.transport.is_open
+
     def read_configuration(self) -> Configuration:
-        """Прочитать конфигурацию модема (команда print)."""
         response = self.protocol.send_command(Commands.PRINT)
         return self.print_parser.parse(response)
 
     def read_link_state(self):
-        """Прочитать состояние линка (команда stat)."""
         response = self.protocol.send_command(Commands.STAT)
         return self.stat_parser.parse(response)
 
     def read_ttl_stats(self):
-        """Прочитать TTL статистику (команда ttlstat)."""
         response = self.protocol.send_command(Commands.TTLSTAT)
         return self.ttlstat_parser.parse(response)
 
-    def _send_command_and_verify(self, command: str, expected_value, verify_func) -> bool:
-        """
-        Отправить команду и проверить изменение через print.
+    # ========== Базовые методы ==========
 
-        Raises:
-            ValueError: Если модем вернул ошибку (Not supported value)
-        """
-        # 1. Отправить команду
-        response = self.protocol.send_command(command)
+    def send_command(self, command: str, timeout: float = None) -> str:
+        """Отправить команду."""
+        return self.protocol.send_command(command, timeout=timeout)
 
-        # 2. Проверить ответ на ошибку
+    def check_error(self, response: str) -> None:
+        """Проверить ответ на ошибку."""
         if "Not supported" in response or "Error" in response:
-            error_msg = response.strip()
-            raise ValueError(f"Модем вернул ошибку: {error_msg}")
+            raise ValueError(f"Модем вернул ошибку: {response.strip()}")
 
-        # 3. Задержка для применения
-        time.sleep(0.2)
+    def verify_change(
+        self, expected_value, verify_func: Callable, max_retries: int = 3, delay: float = 0.15
+    ) -> bool:
+        """Проверить изменение параметра через print."""
+        for attempt in range(max_retries):
+            # time.sleep(delay)
+            config = self.read_configuration()
+            actual_value = verify_func(config)
 
-        # 4. Прочитать конфигурацию
-        config = self.read_configuration()
+            if isinstance(expected_value, str) and isinstance(actual_value, str):
+                if actual_value.lower() == expected_value.lower():
+                    logger.debug(f"Изменение подтверждено (попытка {attempt + 1})")
+                    return True
+            else:
+                if actual_value == expected_value:
+                    logger.debug(f"Изменение подтверждено (попытка {attempt + 1})")
+                    return True
 
-        # 5. Проверить изменение
-        actual_value = verify_func(config)
-        return actual_value == expected_value
+            logger.debug(
+                f"Ожидается {expected_value}, получено {actual_value} (попытка {attempt + 1})"
+            )
+
+        logger.warning(f"Не удалось подтвердить изменение")
+        return False
 
     # ========== Управление радио ==========
 
     def set_frequency(self, freq: int) -> bool:
-        """Установить частоту (3500, 4000, 4500, 6500 MHz)."""
         if freq not in [3500, 4000, 4500, 6500]:
             raise ValueError(f"Not supported value: {freq}. Supported: 3500, 4000, 4500, 6500")
 
-        return self._send_command_and_verify(
-            f"freq {freq}",
-            freq,
-            lambda cfg: cfg.frequency
-        )
+        response = self.send_command(f"freq {freq}")
+        self.check_error(response)
+        return self.verify_change(freq, lambda cfg: cfg.frequency)
 
     def set_fhss_mode(self, mode: int) -> bool:
-        """Установить режим FHSS (0-4)."""
         if mode not in range(0, 5):
             raise ValueError(f"Not supported value: {mode}. Supported: 0, 1, 2, 3, 4")
 
-        return self._send_command_and_verify(
-            f"fhss {mode}",
-            mode,
-            lambda cfg: cfg.fhss
-        )
+        response = self.send_command(f"fhss {mode}")
+        self.check_error(response)
+        return self.verify_change(mode, lambda cfg: cfg.fhss)
 
     def set_dsss_mode(self, mode: int) -> bool:
-        """Установить режим DSSS (0-7, рабочие 0-3)."""
         if mode not in range(0, 8):
             raise ValueError(f"Not supported value: {mode}. Supported: 0-7")
 
-        return self._send_command_and_verify(
-            f"dsss {mode}",
-            mode,
-            lambda cfg: cfg.dsss
-        )
+        response = self.send_command(f"dsss {mode}")
+        self.check_error(response)
+        return self.verify_change(mode, lambda cfg: cfg.dsss)
 
     def set_mode(self, mode: str) -> bool:
-        """Установить режим работы (swarm+, swarm, longrange)."""
         if mode not in ["swarm+", "swarm", "longrange"]:
-            raise ValueError(f"Not supported value: {mode}. Supported: 'swarm+', 'swarm', 'longrange'")
+            raise ValueError(
+                f"Not supported value: {mode}. Supported: 'swarm+', 'swarm', 'longrange'"
+            )
 
-        return self._send_command_and_verify(
-            f"mode {mode}",
-            mode,
-            lambda cfg: cfg.mode
+        response = self.send_command(f"mode {mode}")
+        self.check_error(response)
+        return self.verify_change(
+            mode.lower() if mode else None, lambda cfg: cfg.mode.lower() if cfg.mode else None
         )
 
     def set_channel_code(self, code: int) -> bool:
-        """Установить код канала (1-24)."""
         if code not in range(1, 25):
             raise ValueError(f"Not supported value: {code}. Supported: 1-24")
 
-        return self._send_command_and_verify(
-            f"code {code}",
-            code,
-            lambda cfg: cfg.channel_code
-        )
+        response = self.send_command(f"code {code}")
+        self.check_error(response)
+        return self.verify_change(code, lambda cfg: cfg.channel_code)
 
     def set_attenuation(self, value: int) -> bool:
-        """Установить аттенюацию (0-30 dB)."""
         if value not in range(0, 31):
             raise ValueError(f"Not supported value: {value}. Supported: 0-30")
 
-        return self._send_command_and_verify(
-            f"attenuation {value}",
-            value,
-            lambda cfg: cfg.attenuation
-        )
+        response = self.send_command(f"attenuation {value}")
+        self.check_error(response)
+        return self.verify_change(value, lambda cfg: cfg.attenuation)
 
     def set_rate(self, rate: int) -> bool:
-        """Установить частоту отправки (5, 10, 25, 40, 50 Hz)."""
         if rate not in [5, 10, 25, 40, 50]:
             raise ValueError(f"Not supported value: {rate}. Supported: 5, 10, 25, 40, 50")
 
-        return self._send_command_and_verify(
-            f"rate {rate}",
-            rate,
-            lambda cfg: cfg.link_rate
-        )
-
-    # ========== Сетевые настройки ==========
+        response = self.send_command(f"rate {rate}")
+        self.check_error(response)
+        return self.verify_change(rate, lambda cfg: cfg.link_rate)
 
     def set_pan(self, pan: int) -> bool:
-        """Установить адрес сети (0-65534)."""
         if pan not in range(0, 65535):
             raise ValueError(f"Not supported value: {pan}. Supported: 0-65534")
 
-        return self._send_command_and_verify(
-            f"pan {pan}",
-            pan,
-            lambda cfg: cfg.network_address
-        )
+        response = self.send_command(f"pan {pan}")
+        self.check_error(response)
+        return self.verify_change(pan, lambda cfg: cfg.network_address)
 
     def set_bind_address(self, address: int) -> bool:
-        """Установить адрес управления (0-65534)."""
         if address not in range(0, 65535):
             raise ValueError(f"Not supported value: {address}. Supported: 0-65534")
 
-        return self._send_command_and_verify(
-            f"bind {address}",
-            address,
-            lambda cfg: cfg.bind_address
-        )
-
-    # ========== Управление ==========
+        response = self.send_command(f"bind {address}")
+        self.check_error(response)
+        return self.verify_change(address, lambda cfg: cfg.bind_address)
 
     def set_protocol(self, protocol: str) -> bool:
-        """Установить протокол (crsf_parser, sbus, mavlink, raw)."""
-        if protocol not in ["crsf_parser", "sbus", "mavlink", "raw"]:
-            raise ValueError(f"Not supported value: {protocol}. Supported: 'crsf_parser', 'sbus', 'mavlink', 'raw'")
+        if protocol not in ["crsf", "sbus", "mavlink", "raw"]:
+            raise ValueError(
+                f"Not supported value: {protocol}. Supported: 'crsf', 'sbus', 'mavlink', 'raw'"
+            )
 
-        return self._send_command_and_verify(
-            f"protocol {protocol}",
-            protocol,
-            lambda cfg: cfg.protocol
+        response = self.send_command(f"protocol {protocol}")
+        self.check_error(response)
+        return self.verify_change(
+            protocol.lower() if protocol else None,
+            lambda cfg: cfg.protocol.lower() if cfg.protocol else None,
         )
 
     def set_timeslot(self, slot: int) -> bool:
-        """Установить режим временного деления (0, 1, 2)."""
         if slot not in [0, 1, 2]:
             raise ValueError(f"Not supported value: {slot}. Supported: 0, 1, 2")
 
-        return self._send_command_and_verify(
-            f"timeslot {slot}",
-            bool(slot),
-            lambda cfg: cfg.time_slotting
-        )
+        response = self.send_command(f"timeslot {slot}")
+        self.check_error(response)
+        return self.verify_change(bool(slot), lambda cfg: cfg.time_slotting)
 
     # ========== Toggle-команды ==========
 
-    def _toggle_parameter(self, command: str, get_state_func, set_state_func) -> bool:
-        """
-        Общий метод для toggle-команд.
-
-        Args:
-            command: Команда для отправки
-            get_state_func: Функция для получения текущего состояния из Configuration
-            set_state_func: Функция для установки состояния в Configuration (не используется)
-
-        Returns:
-            True если состояние изменилось
-        """
-        # 1. Получить текущее состояние
+    def _toggle_parameter(self, command: str, get_state_func) -> bool:
         old_config = self.read_configuration()
         old_state = get_state_func(old_config)
 
-        # 2. Отправить команду
-        response = self.protocol.send_command(command)
+        response = self.send_command(command)
+        self.check_error(response)
 
-        # 3. Проверить ответ на ошибку
-        if "Not supported" in response or "Error" in response:
-            raise ValueError(f"Модем вернул ошибку: {response.strip()}")
+        for attempt in range(3):
+            #time.sleep(0.15)
+            new_config = self.read_configuration()
+            new_state = get_state_func(new_config)
 
-        time.sleep(0.2)
+            if new_state != old_state and new_state is not None:
+                logger.debug(f"Toggle '{command}' успешен (попытка {attempt + 1})")
+                return True
 
-        # 4. Прочитать новое состояние
-        new_config = self.read_configuration()
-        new_state = get_state_func(new_config)
-
-        # 5. Проверить изменение
-        return new_state != old_state and new_state is not None
+        logger.warning(f"Не удалось подтвердить toggle после команды '{command}'")
+        return False
 
     def toggle_led(self) -> bool:
-        """Переключить состояние светодиода (toggle)."""
-        return self._toggle_parameter(
-            "led",
-            lambda cfg: cfg.led_state,
-            lambda cfg, val: setattr(cfg, 'led_state', val)
-        )
+        return self._toggle_parameter("led", lambda cfg: cfg.led_state)
 
     def toggle_ew_tests(self) -> bool:
-        """Переключить режим РЭБ тестов (toggle)."""
-        return self._toggle_parameter(
-            "ewtests",
-            lambda cfg: cfg.ew_tests,
-            lambda cfg, val: setattr(cfg, 'ew_tests', val)
-        )
+        return self._toggle_parameter("ewtests", lambda cfg: cfg.ew_tests)
 
     def toggle_retransmissions(self) -> bool:
-        """Переключить ретрансляции (TTL) - только для TX."""
-        return self._toggle_parameter(
-            "ttl",
-            lambda cfg: cfg.retransmissions,
-            lambda cfg, val: setattr(cfg, 'retransmissions', val)
-        )
+        return self._toggle_parameter("ttl", lambda cfg: cfg.retransmissions)
 
     def toggle_acknowledge(self) -> bool:
-        """Переключить подтверждения (ack) - только для TX."""
-        return self._toggle_parameter(
-            "ack",
-            lambda cfg: cfg.acknowledge,
-            lambda cfg, val: setattr(cfg, 'acknowledge', val)
-        )
+        return self._toggle_parameter("ack", lambda cfg: cfg.acknowledge)
 
     # ========== Специальные команды ==========
 
     def reboot(self) -> bool:
-        """Перезагрузить модем."""
-        response = self.protocol.send_command("reboot")
+        try:
+            response = self.send_command("reboot", timeout=3.0)
+            self.check_error(response)
 
-        if "ESP-ROM" not in response:
+            if "ESP-ROM" not in response:
+                logger.warning("Модем не начал перезагрузку (нет ESP-ROM)")
+                return False
+
+            if "Initialization done!" in response:
+                logger.info("✅ Модем успешно перезагружен")
+                return True
+
+            logger.info("Ожидание завершения перезагрузки...")
+            time.sleep(2.0)
+
+            return self.protocol.reopen()
+
+        except Exception as e:
+            logger.error(f"Ошибка при перезагрузке: {e}")
             return False
 
-        time.sleep(1.0)
-        return self.protocol._check_connection()
-
     def get_help(self) -> str:
-        """Получить справку по командам (сырой ответ)."""
-        return self.protocol.send_command("help")
+        return self.send_command("help")

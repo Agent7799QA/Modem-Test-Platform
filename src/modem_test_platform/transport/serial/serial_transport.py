@@ -32,7 +32,7 @@ class SerialTransport:
                 write_timeout=self.timeout,
             )
             # Небольшая задержка для инициализации порта
-            time.sleep(0.1)
+            #time.sleep(0.1)
         except SerialException as e:
             error_msg = str(e).lower()
             if "access is denied" in error_msg or "permissionerror" in error_msg:
@@ -85,7 +85,6 @@ class SerialTransport:
     def send_command(self, command: str, timeout: float = None) -> str:
         """
         Отправить команду и получить ответ.
-        Работает аналогично modem_test.py - читает все данные с таймаутом.
         """
         if not self.is_open:
             raise TransportConnectionError("Порт не открыт")
@@ -94,11 +93,11 @@ class SerialTransport:
         self.reset_input_buffer()
         self.reset_output_buffer()
 
-        # Отправить команду с \r\n (как в modem_test.py)
+        # Отправить команду с \r\n
         self.write(f"{command}\r\n".encode("utf-8"))
 
-        # Дать время модему на обработку (как в modem_test.py)
-        time.sleep(0.1)
+        # Дать время модему на обработку
+        #time.sleep(0.1)
 
         # Сохраняем оригинальный таймаут
         original_timeout = self._serial.timeout if self._serial else None
@@ -106,49 +105,75 @@ class SerialTransport:
             self._serial.timeout = timeout
 
         try:
-            # Читаем все доступные данные с таймаутом (как в modem_test.py)
             response = b""
             while True:
-                # Читаем до 4096 байт за раз
                 data = self._serial.read(4096)
                 if not data:
                     break
                 response += data
 
-                # Проверяем, есть ли еще данные
-                if self._serial.in_waiting == 0:
-                    # Даем небольшой таймаут для получения остальных данных
-                    time.sleep(0.1)
+                text = data.decode("utf-8", errors="ignore")
+
+                # ✅ Единственный надежный маркер окончания - ".."
+                if ".." in text:
+                    # Даем время для получения остальных данных
+                    time.sleep(0.05)
                     if self._serial.in_waiting == 0:
                         break
         finally:
             if timeout is not None and original_timeout is not None:
                 self._serial.timeout = original_timeout
 
-        # Декодируем ответ
         response_text = response.decode("utf-8", errors="ignore")
 
-        # Удаляем эхо команды (как в modem_test.py)
+        # Очищаем ответ от эха команды
         lines = response_text.splitlines()
         cleaned_lines = []
         skip_echo = True
 
         for line in lines:
+            stripped = line.strip()
+
+            # Пропускаем эхо команды
             if skip_echo:
-                stripped = line.strip()
-                # Пропускаем строки с эхо
-                if stripped == command or stripped == f"> {command}" or stripped == ">" or stripped == command + "\r":
+                # Эхо может быть: "freq 4500" или "> print" или "> " или просто ">"
+                if stripped == command:
                     continue
-                # Если встретили начало реального ответа
-                if any(marker in line for marker in ["Drone RC", "Uplink LQ", "Recieved statistic", "Onboard LED"]):
+                if stripped == f"> {command}":
+                    continue
+                if stripped == ">":
+                    continue
+                if stripped == "..":
+                    continue
+
+                # Если строка с данными - начинаем собирать
+                if stripped and not stripped.startswith(">"):
                     skip_echo = False
-                    cleaned_lines.append(line)
-                elif stripped and not stripped.startswith(">"):
+                    # Убираем ".." если есть в конце
+                    if stripped.endswith(".."):
+                        stripped = stripped[:-2]
+                    cleaned_lines.append(stripped)
+                elif stripped.startswith(">") and len(stripped) > 1:
+                    # Это может быть "> data" - убираем "> "
                     skip_echo = False
-                    cleaned_lines.append(line)
+                    data_part = stripped[1:].strip()
+                    if data_part.endswith(".."):
+                        data_part = data_part[:-2]
+                    if data_part:
+                        cleaned_lines.append(data_part)
             else:
-                cleaned_lines.append(line)
+                # Убираем ">" в начале строки если есть
+                if stripped.startswith(">"):
+                    if stripped == ">":
+                        continue
+                    stripped = stripped[1:].strip()
+                # Убираем ".." в конце
+                if stripped.endswith(".."):
+                    stripped = stripped[:-2]
+                if stripped:
+                    cleaned_lines.append(stripped)
 
         response_text = "\n".join(cleaned_lines).strip()
-        logger.debug(f"Ответ на команду '{command}': {len(response_text)} байт")
+
+        # Для команд без данных (freq, mode, led) ответ может быть пустым
         return response_text

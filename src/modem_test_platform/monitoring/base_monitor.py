@@ -211,7 +211,7 @@ class BaseMonitor:
                             print("Maximum retries reached. Exiting.")
                             break
                         self._retries += 1
-                        time.sleep(0.5)
+                        time.sleep(0.05)
                         continue
 
                 # Читаем данные
