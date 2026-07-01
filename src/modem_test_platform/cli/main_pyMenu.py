@@ -148,66 +148,41 @@ def execute_command_with_state(func, args, description: str, update_func=None):
 
 # ========== Обработчики команд ==========
 
-def handle_refresh_params(port: str):
-    """Перечитать параметры (подключение + конфигурация + stat)"""
+def handle_read_config(port: str) -> int:
+    """Перечитать конфигурацию (только print, без stat)"""
     global state
 
-    console.print("[bold blue]🔄 Перечитывание параметров...[/bold blue]")
+    console.print("[bold blue]📖 Перечитывание конфигурации...[/bold blue]")
 
     try:
-        # Создаем адаптер если нет
+        # Если модем не создан или не подключен - подключаем
         if state.modem is None:
             state.modem = get_modem(port)
             state.port = port
-
-        # Подключаемся если не подключены
-        if not state.modem.protocol.transport.is_open:
+            state.modem.connect()
+            console.print(f"[green]✅ Подключено к модему на порту {port}[/green]")
+        elif not state.modem.protocol.transport.is_open:
             state.modem.connect()
             console.print(f"[green]✅ Подключено к модему на порту {port}[/green]")
 
-        # Читаем конфигурацию
+        # Читаем только конфигурацию (без stat)
         config = state.modem.read_configuration()
         if config:
             state.update_from_config(config)
-            console.print(f"[green]✅ Конфигурация получена[/green]")
+            console.print("[green]✅ Конфигурация получена[/green]")
+            state.last_command_time = datetime.now().strftime("%H:%M:%S")
+            return 0
         else:
             console.print("[red]❌ Не удалось получить конфигурацию[/red]")
             return 1
 
-        # Читаем состояние канала
-        link_state = state.modem.read_link_state()
-        if link_state:
-            state.update_from_link_state(link_state)
-            console.print(f"[green]✅ Состояние канала получено[/green]")
-        else:
-            console.print("[yellow]⚠️ Не удалось получить состояние канала[/yellow]")
-
-        state.last_command_time = datetime.now().strftime("%H:%M:%S")
-        return 0
-
+    except TransportConnectionError as e:
+        console.print(f"[red]❌ Ошибка подключения: {e}[/red]")
+        return 1
     except Exception as e:
         console.print(f"[red]❌ Ошибка: {e}[/red]")
+        logger.exception("Ошибка при чтении конфигурации")
         return 1
-
-
-def handle_read_config(port: str):
-    """Чтение конфигурации"""
-    global state
-
-    if state.modem is None or not state.modem.protocol.transport.is_open:
-        console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать параметры'[/red]")
-        return 1
-
-    args = create_args(port)
-
-    def update():
-        config = state.modem.read_configuration()
-        if config:
-            state.update_from_config(config)
-
-    return execute_command_with_state(
-        read_config_cmd, args, "📖 Чтение конфигурации", update
-    )
 
 
 def handle_read_stat(port: str):
@@ -215,7 +190,7 @@ def handle_read_stat(port: str):
     global state
 
     if state.modem is None or not state.modem.protocol.transport.is_open:
-        console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать параметры'[/red]")
+        console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать конфигурацию'[/red]")
         return 1
 
     args = create_args(port)
@@ -235,7 +210,7 @@ def handle_set_frequency(port: str):
     global state
 
     if state.modem is None or not state.modem.protocol.transport.is_open:
-        console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать параметры'[/red]")
+        console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать конфигурацию'[/red]")
         return 1
 
     freq_options = [3500, 4000, 4500, 6500]
@@ -278,7 +253,7 @@ def handle_set_mode(port: str):
     global state
 
     if state.modem is None or not state.modem.protocol.transport.is_open:
-        console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать параметры'[/red]")
+        console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать конфигурацию'[/red]")
         return 1
 
     mode_options = ["swarm+", "swarm", "longrange"]
@@ -321,7 +296,7 @@ def handle_set_rate(port: str):
     global state
 
     if state.modem is None or not state.modem.protocol.transport.is_open:
-        console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать параметры'[/red]")
+        console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать конфигурацию'[/red]")
         return 1
 
     rate_options = [5, 10, 25, 40, 50]
@@ -366,7 +341,7 @@ def handle_set_protocol(port: str):
     global state
 
     if state.modem is None or not state.modem.protocol.transport.is_open:
-        console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать параметры'[/red]")
+        console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать конфигурацию'[/red]")
         return 1
 
     protocol_options = ["crsf", "sbus", "mavlink", "raw"]
@@ -410,7 +385,7 @@ def handle_set_fhss(port: str):
     global state
 
     if state.modem is None or not state.modem.protocol.transport.is_open:
-        console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать параметры'[/red]")
+        console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать конфигурацию'[/red]")
         return 1
 
     fhss_options = [0, 1, 2, 3, 4]
@@ -461,7 +436,7 @@ def handle_set_dsss(port: str):
     global state
 
     if state.modem is None or not state.modem.protocol.transport.is_open:
-        console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать параметры'[/red]")
+        console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать конфигурацию'[/red]")
         return 1
 
     dsss_options = [0, 1, 2, 3, 7]
@@ -512,7 +487,7 @@ def handle_set_pan(port: str):
     global state
 
     if state.modem is None or not state.modem.protocol.transport.is_open:
-        console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать параметры'[/red]")
+        console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать конфигурацию'[/red]")
         return 1
 
     try:
@@ -546,7 +521,7 @@ def handle_set_bind(port: str):
     global state
 
     if state.modem is None or not state.modem.protocol.transport.is_open:
-        console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать параметры'[/red]")
+        console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать конфигурацию'[/red]")
         return 1
 
     try:
@@ -580,7 +555,7 @@ def handle_toggle_led(port: str):
     global state
 
     if state.modem is None or not state.modem.protocol.transport.is_open:
-        console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать параметры'[/red]")
+        console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать конфигурацию'[/red]")
         return 1
 
     args = create_args(port)
@@ -599,22 +574,25 @@ def handle_reboot(port: str):
     global state
 
     if state.modem is None or not state.modem.protocol.transport.is_open:
-        console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать параметры'[/red]")
+        console.print(
+            "[red]❌ Модем не подключен. Сначала выполните 'Перечитать конфигурацию'[/red]"
+        )
         return 1
 
     if Confirm.ask("[yellow]⚠️  Перезагрузить модем?[/yellow]"):
         args = create_args(port)
 
         try:
-            # 1. Отправляем reboot (адаптер сам ждет "Initialization done!")
             result = state.modem.reboot()
 
             if result:
                 console.print("[green]✅ Модем перезагружен успешно[/green]")
 
-                # 2. После перезагрузки читаем конфигурацию
+                # СОХРАНЯЕМ ВРЕМЯ ПЕРЕЗАГРУЗКИ
+                state.last_reboot_time = datetime.now().strftime("%H:%M:%S")
+
+                # После перезагрузки читаем конфигурацию
                 try:
-                    # time.sleep(0.5)
                     config = state.modem.read_configuration()
                     if config:
                         state.update_from_config(config)
@@ -825,6 +803,24 @@ def main():
         port = get_port_from_user()
         state.port = port
 
+        # АВТОМАТИЧЕСКИ подключаемся и читаем конфигурацию
+        console.print("\n[bold blue]🔄 Автоматическое подключение и чтение конфигурации...[/bold blue]")
+        try:
+            state.modem = get_modem(port)
+            state.modem.connect()
+            console.print(f"[green]✅ Подключено к модему на порту {port}[/green]")
+
+            config = state.modem.read_configuration()
+            if config:
+                state.update_from_config(config)
+                console.print("[green]✅ Конфигурация загружена[/green]")
+                state.last_command_time = datetime.now().strftime("%H:%M:%S")
+            else:
+                console.print("[yellow]⚠️ Не удалось загрузить конфигурацию[/yellow]")
+        except Exception as e:
+            console.print(f"[red]❌ Ошибка при подключении: {e}[/red]")
+            console.print("[yellow]⚠️ Некоторые команды могут быть недоступны. Используйте пункт 1 для перечитывания конфигурации.[/yellow]")
+
         while True:
             print_header()
 
@@ -834,24 +830,24 @@ def main():
             menu_table.add_column("Команда", style="white")
             menu_table.add_column("Текущее состояние", style="green", width=40)
 
+            # ОБНОВЛЕННОЕ МЕНЮ (без пункта 2, нумерация сдвинута)
             menu_items = [
-                ("1", "Перечитать параметры", state.get_connection_status()),
-                ("2", "Чтение конфигурации", state.get_config_time_display()),
-                ("3", "Чтение состояния канала", state.get_stat_display()),
-                ("4", "Установка частоты", state.get_frequency_display()),
-                ("5", "Установка режима", state.get_mode_display()),
-                ("6", "Установка скорости (rate)", state.get_rate_display()),
-                ("7", "Установка протокола", state.get_protocol_display()),
-                ("8", "Установка FHSS", state.get_fhss_display()),
-                ("9", "Установка DSSS", state.get_dsss_display()),
-                ("10", "Установка адреса сети (PAN)", state.get_pan_display()),
-                ("11", "Установка адреса управления (BIND)", state.get_bind_display()),
-                ("12", "Переключение LED", state.get_led_display()),
-                ("13", "Перезагрузка модема", "⏹ Не выполнялась"),
-                ("14", "Телеметрия - мониторинг", state.get_monitor_display()),
-                ("15", "Телеметрия - сбор статистики", state.get_stats_display()),
-                ("16", "Телеметрия - эмуляция команд", state.get_emulation_display()),
-                ("17", "Сменить порт", state.port or "—"),
+                ("1", "Перечитать конфигурацию", state.get_config_time_display()),
+                ("2", "Чтение состояния канала", state.get_stat_display()),
+                ("3", "Установка частоты", state.get_frequency_display()),
+                ("4", "Установка режима", state.get_mode_display()),
+                ("5", "Установка скорости (rate)", state.get_rate_display()),
+                ("6", "Установка протокола", state.get_protocol_display()),
+                ("7", "Установка FHSS", state.get_fhss_display()),
+                ("8", "Установка DSSS", state.get_dsss_display()),
+                ("9", "Установка адреса сети (PAN)", state.get_pan_display()),
+                ("10", "Установка адреса управления (BIND)", state.get_bind_display()),
+                ("11", "Переключение LED", state.get_led_display()),
+                ("12", "Перезагрузка модема", state.get_reboot_display()),  # <-- ИЗМЕНЕНО
+                ("13", "Телеметрия - мониторинг", state.get_monitor_display()),
+                ("14", "Телеметрия - сбор статистики", state.get_stats_display()),
+                ("15", "Телеметрия - эмуляция команд", state.get_emulation_display()),
+                ("16", "Сменить порт", state.port or "—"),
                 ("0", "Выход", ""),
             ]
 
@@ -862,34 +858,47 @@ def main():
 
             choice = Prompt.ask("\n[bold cyan]👉 Выберите действие[/bold cyan]")
 
+            # ОБНОВЛЕННЫЙ СЛОВАРЬ ХЭНДЛЕРОВ (без пункта 2)
             handlers = {
-                '1': lambda: handle_refresh_params(port),
-                '2': lambda: handle_read_config(port),
-                '3': lambda: handle_read_stat(port),
-                '4': lambda: handle_set_frequency(port),
-                '5': lambda: handle_set_mode(port),
-                '6': lambda: handle_set_rate(port),
-                '7': lambda: handle_set_protocol(port),
-                '8': lambda: handle_set_fhss(port),
-                '9': lambda: handle_set_dsss(port),
-                '10': lambda: handle_set_pan(port),
-                '11': lambda: handle_set_bind(port),
-                '12': lambda: handle_toggle_led(port),
-                '13': lambda: handle_reboot(port),
-                '14': lambda: handle_telemetry_monitor(port),
-                '15': lambda: handle_telemetry_collect(port),
-                '16': lambda: handle_telemetry_emulate(port),
-                '17': lambda: change_port(port),
+                '1': lambda: handle_read_config(port),
+                '2': lambda: handle_read_stat(port),
+                '3': lambda: handle_set_frequency(port),
+                '4': lambda: handle_set_mode(port),
+                '5': lambda: handle_set_rate(port),
+                '6': lambda: handle_set_protocol(port),
+                '7': lambda: handle_set_fhss(port),
+                '8': lambda: handle_set_dsss(port),
+                '9': lambda: handle_set_pan(port),
+                '10': lambda: handle_set_bind(port),
+                '11': lambda: handle_toggle_led(port),
+                '12': lambda: handle_reboot(port),
+                '13': lambda: handle_telemetry_monitor(port),
+                '14': lambda: handle_telemetry_collect(port),
+                '15': lambda: handle_telemetry_emulate(port),
+                '16': lambda: change_port(port),
                 '0': lambda: exit_program(port),
             }
 
             handler = handlers.get(choice)
             if handler:
                 result = handler()
-                if choice == '17':
+                if choice == '16':  # Сменить порт (было 17)
                     if result:
                         port = result
                         state.port = port
+                        # После смены порта автоматически читаем конфигурацию
+                        console.print("\n[bold blue]🔄 Загрузка конфигурации на новом порту...[/bold blue]")
+                        try:
+                            if state.modem is None:
+                                state.modem = get_modem(port)
+                            state.modem.connect()
+                            config = state.modem.read_configuration()
+                            if config:
+                                state.update_from_config(config)
+                                console.print("[green]✅ Конфигурация загружена[/green]")
+                                state.last_command_time = datetime.now().strftime("%H:%M:%S")
+                        except Exception as e:
+                            console.print(f"[red]❌ Ошибка: {e}[/red]")
                 elif choice == '0':
                     break
                 else:
@@ -897,7 +906,7 @@ def main():
                         input("\n[yellow]Нажмите Enter для продолжения...[/yellow]")
                     console.clear()
             else:
-                console.print("[red]❌ Неверный выбор. Пожалуйста, выберите пункт от 0 до 17.[/red]")
+                console.print("[red]❌ Неверный выбор. Пожалуйста, выберите пункт от 0 до 16.[/red]")
                 input("Нажмите Enter для продолжения...")
                 console.clear()
 

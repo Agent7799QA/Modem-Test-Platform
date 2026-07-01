@@ -48,6 +48,7 @@ class SessionState:
     last_config_time: Optional[str] = None
     last_stat_time: Optional[str] = None
     last_command_time: Optional[str] = None
+    last_reboot_time: Optional[str] = None
 
     # Телеметрия
     monitor_active: bool = False
@@ -173,6 +174,12 @@ class SessionState:
         """Получить отображение времени чтения состояния."""
         if self.last_stat_time:
             return f"✅ Выполнено ({self.last_stat_time})"
+        return "⏹ Не выполнялась"
+
+    def get_reboot_display(self) -> str:
+        """Отображение времени последней перезагрузки."""
+        if self.last_reboot_time:
+            return f"🔄 {self.last_reboot_time}"
         return "⏹ Не выполнялась"
 
     def get_monitor_display(self) -> str:
