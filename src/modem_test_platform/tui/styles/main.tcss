@@ -1,0 +1,205 @@
+/*
+ * Глобальные стили для TUI приложения
+ */
+
+Screen {
+    background: $surface;
+}
+
+/* Заголовок приложения */
+.header {
+    background: $primary;
+    color: $text;
+    padding: 1;
+}
+
+/* Меню */
+.menu-container {
+    padding: 1;
+}
+
+.menu-item {
+    margin: 1;
+    padding: 1 2;
+    background: $panel;
+}
+
+.menu-item:hover {
+    background: $primary;
+    color: $text;
+}
+
+.menu-item.-selected {
+    background: $primary;
+    color: $text;
+}
+
+/* Кнопки */
+.button {
+    margin: 1;
+    padding: 1 2;
+    background: $primary;
+    color: $text;
+}
+
+.button:hover {
+    background: $accent;
+}
+
+.button.-error {
+    background: $error;
+}
+
+.button.-success {
+    background: $success;
+}
+
+/* Таблицы */
+.telemetry-table {
+    margin: 1;
+    border: solid $primary;
+}
+
+.telemetry-table .header {
+    background: $primary;
+    color: $text;
+}
+
+/* Статус */
+.status-good {
+    color: $success;
+}
+
+.status-bad {
+    color: $error;
+}
+
+.status-warning {
+    color: $warning;
+}
+
+.status-indicator {
+    margin: 1;
+    padding: 1 2;
+    border: solid $surface;
+}
+
+.status-indicator.good {
+    background: $success;
+    color: $text;
+    border: solid $success;
+}
+
+.status-indicator.bad {
+    background: $error;
+    color: $text;
+    border: solid $error;
+}
+
+.status-indicator.warning {
+    background: $warning;
+    color: $text;
+    border: solid $warning;
+}
+
+.status-indicator.disconnected {
+    background: $surface;
+    color: $text;
+    border: solid $surface;
+}
+
+/* Панели */
+.panel {
+    margin: 1;
+    padding: 1;
+    border: solid $primary;
+}
+
+.panel-title {
+    background: $primary;
+    color: $text;
+    padding: 0 1;
+}
+
+/* Карточки */
+.card {
+    margin: 1;
+    padding: 1 2;
+    background: $panel;
+    border: solid $primary;
+}
+
+.card-title {
+    color: $text;
+    text-style: bold;
+}
+
+/* Вкладки */
+.tabs {
+    background: $surface;
+}
+
+.tab {
+    padding: 1 2;
+    background: $panel;
+}
+
+.tab.-active {
+    background: $primary;
+    color: $text;
+}
+
+.tab:hover {
+    background: $primary;
+}
+
+/* Прогресс-бар */
+.progress-bar {
+    background: $surface;
+    height: 1;
+}
+
+.progress-bar .fill {
+    background: $primary;
+}
+
+.progress-bar .fill.-complete {
+    background: $success;
+}
+
+.progress-bar .fill.-error {
+    background: $error;
+}
+
+/* Подсказки */
+.hint {
+    color: $text;
+    text-style: italic;
+    padding: 1;
+}
+
+/* Ошибки */
+.error {
+    color: $error;
+    border: solid $error;
+    background: $error;
+}
+
+/* Меню-грид */
+.menu-grid {
+    margin: 1;
+    padding: 1;
+}
+
+.menu-column {
+    margin: 1;
+    padding: 1;
+    width: 50%;
+}
+
+/* Область для ввода каналов */
+.channels-area {
+    height: 5;
+    border: solid $primary;
+    padding: 1;
+}

@@ -1,3 +1,4 @@
+```
 ModemTestPlatform/
 ├── configs/
 ├── data/
@@ -35,19 +36,24 @@ ModemTestPlatform/
 │   │   └── State Machine.md
 │   ├── 08_measurements/
 │   │   ├── Analysis.md
-│   │   ├── Criterion.txt
+│   │   ├── Criterion.md
 │   │   ├── Measurement.md
 │   │   ├── Metric.md
 │   │   ├── Report.md
 │   │   └── Verdict.md
+│   ├── changelog/
+│   │   └── changelog.md
 │   ├── modem_answers/
 │   │   ├── RX help.txt
 │   │   ├── RX led.txt
+│   │   ├── RX mode negative
+│   │   ├── RX mode positive
 │   │   ├── RX port connect message.txt
 │   │   ├── RX print.txt
 │   │   ├── RX reboot.txt
 │   │   ├── RX stat.txt
 │   │   ├── RX ttlstat.txt
+│   │   ├── RX wrong freq
 │   │   ├── TX freq.txt
 │   │   ├── TX help.txt
 │   │   ├── TX led.txt
@@ -55,8 +61,8 @@ ModemTestPlatform/
 │   │   ├── TX print.txt
 │   │   ├── TX reboot.txt
 │   │   └── TX stat.txt
-│   ├── Modem Test Platform Documentation.md
-│   ├── changelog.md
+│   ├── Modem Test Platform Doc Structure.md
+│   ├── modem_settings.md
 │   └── project_tree.md
 ├── scripts/
 ├── src/
@@ -65,9 +71,13 @@ ModemTestPlatform/
 │   │   │   ├── analyzer.py
 │   │   │   ├── criterion.py
 │   │   │   ├── metric.py
+│   │   │   ├── stat_analyzer.py
 │   │   │   └── verdict.py
 │   │   ├── api/
 │   │   ├── cli/
+│   │   │   ├── commands/
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── telemetry_commands.py
 │   │   │   ├── __init__.py
 │   │   │   └── main.py
 │   │   ├── core/
@@ -94,6 +104,9 @@ ModemTestPlatform/
 │   │   │   ├── device.py
 │   │   │   ├── manager.py
 │   │   │   └── registry.py
+│   │   ├── emulation/
+│   │   │   ├── __init__.py
+│   │   │   └── command_emulator.py
 │   │   ├── engine/
 │   │   │   ├── __init__.py
 │   │   │   ├── execution_context.py
@@ -106,6 +119,16 @@ ModemTestPlatform/
 │   │   │   ├── collector.py
 │   │   │   ├── measurement.py
 │   │   │   └── storage.py
+│   │   ├── monitoring/
+│   │   │   ├── CRSFMonitor.py
+│   │   │   ├── __init__.py
+│   │   │   ├── base_monitor.py
+│   │   │   ├── parser_base.py
+│   │   │   ├── port_monitor.py
+│   │   │   ├── rx_monitor.py
+│   │   │   ├── rx_parser.py
+│   │   │   ├── stat_collector.py
+│   │   │   └── tx_parser.py
 │   │   ├── protocols/
 │   │   │   ├── base/
 │   │   │   │   ├── __init__.py
@@ -116,7 +139,6 @@ ModemTestPlatform/
 │   │   │   │   │   └── link_state.py
 │   │   │   │   ├── parsers/
 │   │   │   │   │   ├── __init__.py
-│   │   │   │   │   ├── config_parser.py
 │   │   │   │   │   ├── help_parser.py
 │   │   │   │   │   ├── print_parser.py
 │   │   │   │   │   ├── stat_parser.py
@@ -127,8 +149,12 @@ ModemTestPlatform/
 │   │   │   │   ├── constants.py
 │   │   │   │   ├── crossfire_protocol.py
 │   │   │   │   └── parser.py
+│   │   │   ├── crsf_parser/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── frames.py
+│   │   │   │   ├── handling.py
+│   │   │   │   └── payloads.py
 │   │   │   ├── mavlink/
-│   │   │   ├── serial/
 │   │   │   └── __init__.py
 │   │   ├── reporting/
 │   │   │   ├── generator.py
@@ -151,15 +177,18 @@ ModemTestPlatform/
 │   │   │   ├── serial_port.py
 │   │   │   ├── tcp.py
 │   │   │   └── udp.py
-│   │   ├── web/
-│   │   └── __init__.py
+│   │   ├── ui/
+│   │   └── web/
 │   └── tests/
-│       └── protocols/
-│           └── crossfire/
-│               └── test_link_state_parser.py
+│       ├── protocols/
+│       │   └── crossfire/
+│       │       └── test_link_state_parser.py
+│       ├── modem_test.py
+│       └── test_crossfire_adapter.py
 ├── tests/
 ├── ModemTestPlatform.zip
 ├── README.md
 ├── git.ignore
 ├── pyproject.toml
 └── requirements.txt
+``````
