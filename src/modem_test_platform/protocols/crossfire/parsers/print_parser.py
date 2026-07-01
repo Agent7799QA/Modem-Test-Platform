@@ -1,7 +1,12 @@
 import re
+import logging
 
+from crossfire.crossfire_protocol import logger
 from modem_test_platform.devices.configuration import Configuration
 
+
+import logging
+logger = logging.getLogger(__name__)
 
 class PrintParser:
     """Парсер ответа команды 'print'."""
@@ -75,7 +80,7 @@ class PrintParser:
 
     def _parse_radio_section(self, cfg: Configuration, section: str) -> None:
         """Парсинг секции Radio."""
-        cfg.mode = self._get_string(section, "Mode:")
+        cfg.mode = self._get_string(section, "Mode:").lower().replace(" ", "")
         cfg.link_rate = self._get_int(section, "Link rate:")
         cfg.frequency = self._get_int(section, "Central frequency:")
         cfg.channel_code = self._get_int(section, "Channel code:")
@@ -157,5 +162,7 @@ class PrintParser:
         self._parse_serial_section(cfg, serial_section)
         self._parse_protocol_section(cfg, protocol_section)
         self._parse_external_section(cfg, response)
+
+        logger.debug("Распарсенный режим: %s", cfg)
 
         return cfg

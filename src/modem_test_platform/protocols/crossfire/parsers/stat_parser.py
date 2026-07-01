@@ -1,7 +1,8 @@
 import re
 
 from modem_test_platform.protocols.crossfire.models.link_state import LinkState
-
+import logging
+logger = logging.getLogger(__name__)
 
 class StatParser:
     """Парсер ответа команды 'stat'."""

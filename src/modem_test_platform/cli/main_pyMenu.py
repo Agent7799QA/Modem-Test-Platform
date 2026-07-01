@@ -614,7 +614,7 @@ def handle_reboot(port: str):
 
                 # 2. После перезагрузки читаем конфигурацию
                 try:
-                    time.sleep(0.5)
+                    # time.sleep(0.5)
                     config = state.modem.read_configuration()
                     if config:
                         state.update_from_config(config)

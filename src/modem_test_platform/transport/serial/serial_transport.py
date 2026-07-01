@@ -125,6 +125,7 @@ class SerialTransport:
                 self._serial.timeout = original_timeout
 
         response_text = response.decode("utf-8", errors="ignore")
+        logger.info("Ответ на команду mode %s:\n%s", "stat", response_text)
 
         # Очищаем ответ от эха команды
         lines = response_text.splitlines()

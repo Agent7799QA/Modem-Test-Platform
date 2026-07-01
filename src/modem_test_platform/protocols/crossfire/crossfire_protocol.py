@@ -2,7 +2,7 @@ import time
 import logging
 
 from modem_test_platform.transport.exceptions import TransportConnectionError
-from modem_test_platform.protocols.crossfire.config import ReconnectConfig
+from modem_test_platform.protocols.crossfire.reconnect_config import ReconnectConfig
 from modem_test_platform.transport.serial.serial_transport import SerialTransport
 
 logger = logging.getLogger(__name__)
@@ -60,7 +60,7 @@ class CrossfireProtocol:
                 f"Сначала выполните подключение."
             )
 
-        logger.debug(f"Отправка команды: '{command}'")
+        logger.info(f"Отправка команды: '{command}'")
 
         try:
             # Отправляем команду через транспорт

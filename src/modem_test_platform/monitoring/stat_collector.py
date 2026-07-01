@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from collections import defaultdict
 
 from modem_test_platform.monitoring.rx_monitor import LinkState
-
+from modem_test_platform.monitoring.rx_monitor import RxMonitor
 
 @dataclass
 class StatData:

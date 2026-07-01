@@ -4,16 +4,20 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f0b81956-eb59-4dfc-a4f8-65769f7a17fc" name="Changes" comment="v0.0.27301 graphiс menu PyCLI">
-      <change afterPath="$PROJECT_DIR$/src/modem_test_platform/cli/session_state.py" afterDir="false" />
+    <list default="true" id="f0b81956-eb59-4dfc-a4f8-65769f7a17fc" name="Changes" comment="v0.0.27302 bugfix">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/cli/commands/config_commands.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/cli/commands/config_commands.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/changelog/changelog.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/changelog/changelog.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/modem_test_platform/cli/main_pyMenu.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/cli/main_pyMenu.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/modem_test_platform/devices/adapters/crossfire/crossfire_adapter.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/devices/adapters/crossfire/crossfire_adapter.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/monitoring/base_monitor.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/monitoring/base_monitor.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/monitoring/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/monitoring/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/monitoring/stat_collector.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/monitoring/stat_collector.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/protocols/crossfire/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/protocols/crossfire/reconnect_config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/modem_test_platform/protocols/crossfire/crossfire_protocol.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/protocols/crossfire/crossfire_protocol.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/protocols/crossfire/parser.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/protocols/crossfire/parsers/print_parser.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/protocols/crossfire/parsers/print_parser.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/protocols/crossfire/parsers/stat_parser.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/protocols/crossfire/parsers/stat_parser.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/protocols/crossfire/parsers/ttlstat_parser.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/protocols/crossfire/parsers/ttlstat_parser.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/modem_test_platform/transport/serial/serial_transport.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/transport/serial/serial_transport.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/modem_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/modem_test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,61 +54,61 @@
 }</component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0214738998478196E-130" />
-      <entry key="MS500" value="1.0255750946777054E-26" />
-      <entry key="S2" value="4.373953873950894E-7" />
-      <entry key="S5" value="0.004222465723975796" />
-      <entry key="S10" value="0.09147561450332908" />
-      <entry key="S30" value="0.714510286756834" />
-      <entry key="S60" value="1.1952625295035062" />
-      <entry key="M2" value="1.546082634842939" />
-      <entry key="M5" value="1.8078217322276335" />
-      <entry key="M10" value="2.019057074360013" />
-      <entry key="M15" value="2.392610700289223" />
-      <entry key="M30" value="4.414984024443921" />
-      <entry key="H1" value="10.904830777221834" />
-      <entry key="H2" value="25.144453108068607" />
-      <entry key="H4" value="44.843299471542764" />
-      <entry key="D1" value="83.13364075505734" />
-      <entry key="W1" value="94.0007746045094" />
-    </decayedCancelled>
-    <decayedSelected>
       <entry key="MS100" value="1.0" />
       <entry key="MS500" value="1.0" />
-      <entry key="S2" value="1.0000105870034315" />
-      <entry key="S5" value="1.0181338328753498" />
-      <entry key="S10" value="1.229645007639602" />
-      <entry key="S30" value="2.2694063364241672" />
-      <entry key="S60" value="2.9506293987199035" />
-      <entry key="M2" value="3.4188091062355146" />
-      <entry key="M5" value="3.752341192465243" />
-      <entry key="M10" value="3.8734918028571226" />
-      <entry key="M15" value="3.915120438416999" />
-      <entry key="M30" value="3.9722093202577082" />
-      <entry key="H1" value="4.223118469435798" />
-      <entry key="H2" value="5.081065280131852" />
-      <entry key="H4" value="6.558500712552253" />
-      <entry key="D1" value="9.842351940931445" />
-      <entry key="W1" value="10.819175245608221" />
+      <entry key="S2" value="1.0" />
+      <entry key="S5" value="1.0" />
+      <entry key="S10" value="1.0" />
+      <entry key="S30" value="1.0000003040053398" />
+      <entry key="S60" value="1.000551367124153" />
+      <entry key="M2" value="1.0234995309383244" />
+      <entry key="M5" value="1.238244542107065" />
+      <entry key="M10" value="1.6562709913569513" />
+      <entry key="M15" value="2.056729477299129" />
+      <entry key="M30" value="2.9664466083171037" />
+      <entry key="H1" value="4.725182397373898" />
+      <entry key="H2" value="11.645974747866454" />
+      <entry key="H4" value="28.968059610267293" />
+      <entry key="D1" value="81.85783967498885" />
+      <entry key="W1" value="100.43592276934653" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="6.568514220038223E-260" />
+      <entry key="S30" value="9.420284287066733E-87" />
+      <entry key="S60" value="1.92260294217051E-43" />
+      <entry key="M2" value="8.913352773607268E-22" />
+      <entry key="M5" value="9.450593066588933E-9" />
+      <entry key="M10" value="2.1452134855418824E-4" />
+      <entry key="M15" value="0.006170458790898024" />
+      <entry key="M30" value="0.191255255087053" />
+      <entry key="H1" value="1.2091090685480224" />
+      <entry key="H2" value="3.458814684369594" />
+      <entry key="H4" value="6.602362560163696" />
+      <entry key="D1" value="13.447157449289644" />
+      <entry key="W1" value="15.59521654491581" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.0435997974975E-6" />
-      <entry key="MS500" value="0.06363657498528878" />
-      <entry key="S2" value="0.5022648618382" />
-      <entry key="S5" value="0.778126470226553" />
-      <entry key="S10" value="1.1671409044960608" />
-      <entry key="S30" value="2.8860813304740396" />
-      <entry key="S60" value="4.0810171286315535" />
-      <entry key="M2" value="4.926836003701261" />
-      <entry key="M5" value="5.543290150191312" />
-      <entry key="M10" value="5.8834400523090284" />
-      <entry key="M15" value="6.301049833086885" />
-      <entry key="M30" value="8.382955176951281" />
-      <entry key="H1" value="15.125175868163339" />
-      <entry key="H2" value="30.223645947129594" />
-      <entry key="H4" value="51.400537070204926" />
-      <entry key="D1" value="92.97566835710015" />
-      <entry key="W1" value="104.81989872337562" />
+      <entry key="MS100" value="0.8705505632961241" />
+      <entry key="MS500" value="0.9726549474122855" />
+      <entry key="S2" value="0.9930924954370359" />
+      <entry key="S5" value="0.9972312513520695" />
+      <entry key="S10" value="0.9986146661010289" />
+      <entry key="S30" value="0.9995382995722008" />
+      <entry key="S60" value="1.0003083680627416" />
+      <entry key="M2" value="1.0231275837037503" />
+      <entry key="M5" value="1.237209741139998" />
+      <entry key="M10" value="1.6552690001500456" />
+      <entry key="M15" value="2.061670222488962" />
+      <entry key="M30" value="3.1564892017906256" />
+      <entry key="H1" value="5.933001678015039" />
+      <entry key="H2" value="15.103440678637725" />
+      <entry key="H4" value="35.569215691932186" />
+      <entry key="D1" value="95.30458706584253" />
+      <entry key="W1" value="116.0310710259147" />
     </decayedShown>
   </component>
   <component name="ProblemsViewState">
@@ -326,7 +330,7 @@
       <workItem from="1782809901746" duration="148000" />
       <workItem from="1782810061093" duration="16917000" />
       <workItem from="1782829328975" duration="2965000" />
-      <workItem from="1782887868912" duration="14061000" />
+      <workItem from="1782887868912" duration="21125000" />
     </task>
     <task id="LOCAL-00001" summary="v0.0.27201 connect and get config">
       <option name="closed" value="true" />
@@ -392,7 +396,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782895165182</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="v0.0.27302 bugfix">
+      <option name="closed" value="true" />
+      <created>1782902623567</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1782902623567</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -429,7 +441,8 @@
     <MESSAGE value="v0.0.27205 old project imported, not checked" />
     <MESSAGE value="v0.0.27206 minor change" />
     <MESSAGE value="v0.0.27301 graphiс menu PyCLI" />
-    <option name="LAST_COMMIT_MESSAGE" value="v0.0.27301 graphiс menu PyCLI" />
+    <MESSAGE value="v0.0.27302 bugfix" />
+    <option name="LAST_COMMIT_MESSAGE" value="v0.0.27302 bugfix" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -447,7 +460,7 @@
     <SUITE FILE_PATH="coverage/ModemTestPlatform$tui_main__1_.coverage" NAME="tui_main (1) Coverage Results" MODIFIED="1782892107268" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/modem_test_platform" />
     <SUITE FILE_PATH="coverage/ModemTestPlatform$tui_main.coverage" NAME="tui_main Coverage Results" MODIFIED="1782891920206" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ModemTestPlatform$.coverage" NAME=" Coverage Results" MODIFIED="1782828172420" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
-    <SUITE FILE_PATH="coverage/ModemTestPlatform$main_pyMenu.coverage" NAME="main_pyMenu Coverage Results" MODIFIED="1782902161435" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/modem_test_platform/cli" />
+    <SUITE FILE_PATH="coverage/ModemTestPlatform$main_pyMenu.coverage" NAME="main_pyMenu Coverage Results" MODIFIED="1782915042836" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/modem_test_platform/cli" />
     <SUITE FILE_PATH="coverage/ModemTestPlatform$modem_test.coverage" NAME="modem_test Coverage Results" MODIFIED="1782824182281" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/tests" />
     <SUITE FILE_PATH="coverage/ModemTestPlatform$test_crossfire_adapter.coverage" NAME="test_crossfire_adapter Coverage Results" MODIFIED="1782826520199" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/tests" />
     <SUITE FILE_PATH="coverage/ModemTestPlatform$main__1_.coverage" NAME="main (1) Coverage Results" MODIFIED="1782895320363" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/modem_test_platform" />

@@ -223,7 +223,7 @@ class CrossfireAdapter:
                 return True
 
             logger.info("Ожидание завершения перезагрузки...")
-            time.sleep(2.0)
+            # time.sleep(2.0)
 
             return self.protocol.reopen()
 
