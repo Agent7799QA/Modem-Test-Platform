@@ -43,6 +43,7 @@ class SerialTransport:
 
     def close(self) -> None:
         if self.serial and self.serial.is_open:
+
             self.serial.close()
         self.is_open = False
         logger.info(f"Порт {self.port} закрыт")
@@ -95,7 +96,7 @@ class SerialTransport:
                     logger.error(f"Ошибка чтения: {e}")
                     break
             else:
-                time.sleep(0.01)
+                time.sleep(0.1)
 
         return '\n'.join(lines)
 
