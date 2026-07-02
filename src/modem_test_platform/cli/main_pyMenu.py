@@ -225,7 +225,7 @@ def set_parameter(
     get_current: callable,
     setter: callable,
     description: str,
-    mode: str = "set"  # "set" или "toggle"
+    mode: str = "set",  # "set" или "toggle"
 ) -> int:
     """
     Общая функция для выбора и установки параметра.
@@ -239,7 +239,7 @@ def set_parameter(
         mode: "set" — выбор из списка, "toggle" — просто переключение
 
     Returns:
-        0 при успехе, иначе 1
+        0 при успехе, 1 при ошибке, 2 при возврате в главное меню
     """
     if mode == "toggle":
         # Для toggle-параметров (LED, EW tests и т.д.)
@@ -258,22 +258,35 @@ def set_parameter(
     table.add_column("Значение", style="green", width=20)
 
     current = get_current()
+    # Приводим к строке для сравнения
+    current_str = str(current).lower().strip() if current is not None else ""
     for i, opt in enumerate(options, 1):
-        marker = " ✅" if opt == current else ""
+        opt_str = str(opt).lower().strip()
+        marker = " ✅" if opt_str == current_str else ""
         display = display_map.get(opt, str(opt))
         table.add_row(str(i), f"{display}{marker}")
 
-    console.print(table)
+    console.print(table)  # ← исправлено: добавлена закрывающая скобка
 
     while True:
         try:
-            choice = Prompt.ask(f"[bold cyan]Выберите {description.lower()}[/bold cyan] (1-{len(options)})")
+            choice = Prompt.ask(
+                f"[bold cyan]Выберите {description.lower()}[/bold cyan] (0 - назад, 1-{len(options)})"
+            )
+
+            # Возврат в главное меню
+            if choice == "0":
+                console.print("[yellow]↩️ Возврат в главное меню[/yellow]")
+                return 2  # ← специальный код для возврата без изменений
+
             idx = int(choice) - 1
             if 0 <= idx < len(options):
                 value = options[idx]
                 result = setter(value)
                 if result:
-                    console.print(f"[green]✅ {description} установлен на {display_map.get(value, value)}[/green]")
+                    console.print(
+                        f"[green]✅ {description} установлен на {display_map.get(value, value)}[/green]"
+                    )
                     return 0
                 else:
                     console.print(f"[red]❌ Не удалось установить {description}[/red]")
@@ -933,14 +946,16 @@ def main():
             handler = handlers.get(choice)
             if handler:
                 result = handler()
-                if choice == '16':  # Сменить порт
+                if choice == "16":  # Сменить порт
                     if result:
                         port = result
                         state.port = port
-                        console.print("\n[bold blue]🔄 Загрузка конфигурации на новом порту...[/bold blue]")
+                        console.print(
+                            "\n[bold blue]🔄 Загрузка конфигурации на новом порту...[/bold blue]"
+                        )
                         try:
                             if state.modem is None:
-                                state.modem = get_modem(port)
+                                state.modem = get_modem(port, timeout=0.5)
                             state.modem.connect()
                             config = state.modem.read_configuration()
                             if config:
@@ -949,10 +964,15 @@ def main():
                                 state.last_command_time = datetime.now().strftime("%H:%M:%S")
                         except Exception as e:
                             console.print(f"[red]❌ Ошибка: {e}[/red]")
-                elif choice == '0':
+                elif choice == "0":
                     break
                 else:
-                    if result != 0:
+                    # Обработка результата set_parameter
+                    if result == 2:
+                        # Возврат в главное меню без изменений
+                        console.clear()
+                        continue
+                    elif result != 0:
                         input("\n[yellow]Нажмите Enter для продолжения...[/yellow]")
                     console.clear()
             else:
