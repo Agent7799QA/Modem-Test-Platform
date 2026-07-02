@@ -5,6 +5,7 @@ CRSF Parser - парсинг бинарного протокола Crossfire (CR
 
 __version__ = "1.0.0"
 
+import logging
 from dataclasses import dataclass
 
 from crossfire.crsf_parser.frames import crsf_frame, SYNC_RX_BYTE, SYNC_TX_BYTE
@@ -20,6 +21,7 @@ from construct import (
     StreamError,
 )
 
+logger = logging.getLogger(__name__)
 
 class PacketValidationStatus(Enum):
     VALID = 1

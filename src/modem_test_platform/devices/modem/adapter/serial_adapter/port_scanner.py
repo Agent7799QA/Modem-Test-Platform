@@ -2,23 +2,25 @@
 Сканер портов для обнаружения модемов Салангана-К3
 Адаптирован из modem_tester-master
 """
-
+import logging
 import re
-import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Dict, List, Optional, Tuple
 
 import serial.tools.list_ports
 
-from exceptions import TransportConnectionError
+
+from modem_test_platform.protocols.serial_protocol.exceptions import TransportConnectionError
 from modem_test_platform.devices.modem.adapter.serial_adapter.serial_adapter import SerialAdapter
 from modem_test_platform.devices.modem.modemconfiguration import ModemConfiguration
-from serial_transport import SerialTransport
+from modem_test_platform.protocols.serial_protocol.serial_transport import SerialTransport
 
+logger = logging.getLogger(__name__)
 
 @dataclass
 class ModemInfo:
     """Информация о найденном модеме."""
+
 
     port: str
     port_type: str  # "TX" или "RX"
@@ -41,7 +43,7 @@ class ModemInfo:
         return result
 
 
-def scan_ports(baudrate: int = 115200, timeout: float = 0.5) -> List[ModemInfo]:
+def scan_ports(baudrate: int = 115200, timeout: float = 0.1) -> List[ModemInfo]:
     """
     Найти все модемы на COM-портах.
 
@@ -53,6 +55,8 @@ def scan_ports(baudrate: int = 115200, timeout: float = 0.5) -> List[ModemInfo]:
         List[ModemInfo]: Список найденных модемов
     """
     print("\n🔍 Сканирование COM-портов...")
+
+    logger = logging.getLogger(__name__)
 
     result = []
     ports = [p.device for p in serial.tools.list_ports.comports()]
@@ -68,14 +72,17 @@ def scan_ports(baudrate: int = 115200, timeout: float = 0.5) -> List[ModemInfo]:
         if info:
             result.append(info)
             print(f"   {port}  → ✅ {info.port_type}")
+            logger.info(f"✅ Найден модем на {port}: {info.port_type}")
         else:
             print(f"   {port}  → ❌ Не модем")
-
+            logger.debug(f"❌ На {port} модем не найден")
     return result
 
 
 def _scan_port(port: str, baudrate: int, timeout: float) -> Optional[ModemInfo]:
     """Сканировать один порт."""
+    adapter = None
+    logger.debug(f"Сканирование {port} (baudrate={baudrate}, timeout={timeout})")
     try:
         transport = SerialTransport(port=port, baudrate=baudrate, timeout=timeout)
         adapter = SerialAdapter(transport)
@@ -86,7 +93,7 @@ def _scan_port(port: str, baudrate: int, timeout: float) -> Optional[ModemInfo]:
         # 1. Отправляем help для проверки
         try:
             response = adapter.send_command("help", timeout=timeout)
-        except:
+        except Exception:
             adapter.disconnect()
             return None
 
@@ -119,10 +126,11 @@ def _scan_port(port: str, baudrate: int, timeout: float) -> Optional[ModemInfo]:
         )
 
     except (TransportConnectionError, Exception):
-        try:
-            adapter.disconnect()
-        except:
-            pass
+        if adapter:
+            try:
+                adapter.disconnect()
+            except:
+                pass
         return None
 
 
@@ -170,10 +178,19 @@ def print_modems(modems: List[ModemInfo]) -> None:
         if info.serial_number:
             print(f"   SN: {info.serial_number}")
         if info.config:
+            # Исправлены имена полей
             params = []
-            for key in ["freq", "code", "rate", "address", "bind"]:
+            for key in ["frequency", "channel_code", "link_rate", "module_address", "bind_address"]:
                 val = getattr(info.config, key, None)
                 if val is not None:
-                    params.append(f"{key}={val}")
+                    # Для красивого вывода используем сокращённые имена
+                    display_key = {
+                        "frequency": "freq",
+                        "channel_code": "code",
+                        "link_rate": "rate",
+                        "module_address": "address",
+                        "bind_address": "bind",
+                    }.get(key, key)
+                    params.append(f"{display_key}={val}")
             if params:
                 print(f"   Параметры: {', '.join(params)}")

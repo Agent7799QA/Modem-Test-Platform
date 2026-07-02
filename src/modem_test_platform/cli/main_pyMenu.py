@@ -5,10 +5,9 @@ Modem Test Platform - CLI (Интерактивное меню с Rich)
 import sys
 import logging
 from datetime import datetime
+from typing import List, Optional
 
 import serial
-
-import serial_protocol
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
@@ -27,7 +26,6 @@ from modem_test_platform.cli.commands.telemetry_commands import (
     TelemetryCliConfig,
     parse_channels,
 )
-
 from modem_test_platform.cli.commands.sync_commands import (
     cmd_scan_ports,
     cmd_connect_dual,
@@ -35,7 +33,11 @@ from modem_test_platform.cli.commands.sync_commands import (
     cmd_verify_link,
     cmd_disconnect_dual,
 )
-from exceptions import TransportConnectionError
+from modem_test_platform.devices.modem.adapter.serial_adapter.port_scanner import (
+    ModemInfo,
+    scan_ports,
+)
+from modem_test_platform.protocols.serial_protocol.exceptions import TransportConnectionError
 from modem_test_platform.cli.session_state import get_state
 
 # Настройка логирования
@@ -52,13 +54,73 @@ console = Console()
 state = get_state()
 
 
-def list_available_ports() -> list:
-    return [p.device for p in serial.tools.list_ports.comports()]
+def select_port_manually() -> str:
+    """Ручной выбор порта (если модемы не найдены)."""
+    ports = [p.device for p in serial.tools.list_ports.comports()]
+
+    if not ports:
+        console.print("[red]❌ COM-порты не найдены[/red]")
+        sys.exit(1)
+
+    console.print("[yellow]⚠️ Модемы не обнаружены автоматически.[/yellow]")
+    console.print("[yellow]💡 Возможно, порт данных (420000 бод) не отвечает на команды.[/yellow]")
+    console.print(
+        "[yellow]   Вы можете выбрать порт вручную для работы с портом данных.[/yellow]\n"
+    )
+
+    table = Table(title="📡 Доступные COM-порты", box=box.ROUNDED)
+    table.add_column("№", style="cyan", width=6)
+    table.add_column("Порт", style="green", width=15)
+
+    for i, port in enumerate(ports, 1):
+        table.add_row(str(i), port)
+
+    console.print(table)
+
+    while True:
+        try:
+            choice = Prompt.ask(
+                "\n[bold cyan]Выберите номер порта[/bold cyan] (или 'q' для выхода)"
+            )
+            if choice.lower() == "q":
+                console.print("[yellow]👋 Выход по запросу пользователя[/yellow]")
+                sys.exit(0)
+
+            idx = int(choice) - 1
+            if 0 <= idx < len(ports):
+                port = ports[idx]
+                console.print(f"[green]✅ Выбран порт: {port}[/green]")
+                return port
+        except ValueError:
+            console.print("[red]❌ Введите число[/red]")
+        except KeyboardInterrupt:
+            console.print("\n[yellow]👋 Выход по Ctrl+C[/yellow]")
+            sys.exit(0)
+            
+def display_modems(modems: List[ModemInfo]) -> None:
+    """Отобразить список найденных модемов в виде таблицы."""
+    if not modems:
+        console.print("[red]❌ Модемы не найдены[/red]")
+        return
+
+    table = Table(title="📡 Найденные модемы", box=box.ROUNDED)
+    table.add_column("№", style="cyan", width=4)
+    table.add_column("Порт", style="green", width=12)
+    table.add_column("Тип", style="yellow", width=8)
+
+    for i, info in enumerate(modems, 1):
+        table.add_row(
+            str(i),
+            info.port,
+            info.port_type,
+        )
+
+    console.print(table)
 
 
 def get_port_from_user() -> str:
     """Запрашивает порт у пользователя с красивым выводом"""
-    ports = list_available_ports()
+    ports = [p.device for p in serial.tools.list_ports.comports()]
 
     if not ports:
         console.print("[red]❌ COM-порты не найдены[/red]")
@@ -105,10 +167,9 @@ def print_header():
         "[bold cyan]📡 MODEM TEST PLATFORM[/bold cyan]\n[white]Интерактивное управление[/white]",
         border_style="cyan",
         box=box.DOUBLE,
-        width=80,  # Фиксированная ширина
+        width=80,
     )
-    console.print(panel,  justify="center")
-    # console.print()1
+    console.print(panel, justify="center")
 
 
 def create_args(port: str, **kwargs):
@@ -134,7 +195,6 @@ def execute_command_with_state(func, args, description: str, update_func=None):
             console.print("[red]❌ Команда завершилась с ошибкой[/red]")
             return result
 
-        # Обновляем состояние после успешной команды
         if update_func:
             update_func()
 
@@ -152,7 +212,80 @@ def execute_command_with_state(func, args, description: str, update_func=None):
         return 1
 
 
-# ========== Обработчики команд ==========
+# ============================================================
+#  ОБЩАЯ ФУНКЦИЯ set_parameter
+# ============================================================
+
+def set_parameter(
+    options: list,
+    display_map: dict,
+    get_current: callable,
+    setter: callable,
+    description: str,
+    mode: str = "set"  # "set" или "toggle"
+) -> int:
+    """
+    Общая функция для выбора и установки параметра.
+
+    Args:
+        options: Список допустимых значений
+        display_map: Словарь {значение: строка для отображения}
+        get_current: Функция, возвращающая текущее значение из state
+        setter: Функция, принимающая значение и возвращающая bool
+        description: Описание параметра для заголовка
+        mode: "set" — выбор из списка, "toggle" — просто переключение
+
+    Returns:
+        0 при успехе, иначе 1
+    """
+    if mode == "toggle":
+        # Для toggle-параметров (LED, EW tests и т.д.)
+        console.print(f"[bold blue]🔄 {description}...[/bold blue]")
+        result = setter()  # setter не принимает аргументов
+        if result:
+            console.print(f"[green]✅ {description} переключен[/green]")
+            return 0
+        else:
+            console.print(f"[red]❌ Не удалось переключить {description}[/red]")
+            return 1
+
+    # Режим "set" — выбор из списка
+    table = Table(title=f"📡 {description}", box=box.ROUNDED)
+    table.add_column("№", style="cyan", width=6)
+    table.add_column("Значение", style="green", width=20)
+
+    current = get_current()
+    for i, opt in enumerate(options, 1):
+        marker = " ✅" if opt == current else ""
+        display = display_map.get(opt, str(opt))
+        table.add_row(str(i), f"{display}{marker}")
+
+    console.print(table)
+
+    while True:
+        try:
+            choice = Prompt.ask(f"[bold cyan]Выберите {description.lower()}[/bold cyan] (1-{len(options)})")
+            idx = int(choice) - 1
+            if 0 <= idx < len(options):
+                value = options[idx]
+                result = setter(value)
+                if result:
+                    console.print(f"[green]✅ {description} установлен на {display_map.get(value, value)}[/green]")
+                    return 0
+                else:
+                    console.print(f"[red]❌ Не удалось установить {description}[/red]")
+                    return 1
+            else:
+                console.print("[red]❌ Неверный выбор[/red]")
+        except ValueError:
+            console.print("[red]❌ Введите число[/red]")
+        except KeyboardInterrupt:
+            return 1
+
+
+# ============================================================
+#  ОБРАБОТЧИКИ КОМАНД (с использованием set_parameter)
+# ============================================================
 
 def handle_read_config(port: str) -> int:
     """Перечитать конфигурацию (только print, без stat)"""
@@ -161,7 +294,6 @@ def handle_read_config(port: str) -> int:
     console.print("[bold blue]📖 Перечитывание конфигурации...[/bold blue]")
 
     try:
-        # Если модем не создан или не подключен - подключаем
         if state.modem is None:
             state.modem = get_modem(port)
             state.port = port
@@ -171,7 +303,6 @@ def handle_read_config(port: str) -> int:
             state.modem.connect()
             console.print(f"[green]✅ Подключено к модему на порту {port}[/green]")
 
-        # Читаем только конфигурацию (без stat)
         config = state.modem.read_configuration()
         if config:
             state.update_from_config(config)
@@ -192,9 +323,7 @@ def handle_read_config(port: str) -> int:
 
 
 def handle_read_stat(port: str):
-    """Чтение состояния канала"""
     global state
-
     if state.modem is None or not state.modem.protocol.transport.is_open:
         console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать конфигурацию'[/red]")
         return 1
@@ -212,189 +341,120 @@ def handle_read_stat(port: str):
 
 
 def handle_set_frequency(port: str):
-    """Установка частоты с выбором"""
     global state
-
     if state.modem is None or not state.modem.protocol.transport.is_open:
         console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать конфигурацию'[/red]")
         return 1
 
-    freq_options = [3500, 4000, 4500, 6500]
+    options = [3500, 4000, 4500, 6500]
+    display_map = {f: f"{f} МГц" for f in options}
+    get_current = lambda: state.frequency
+    setter = lambda v: state.modem.set_frequency(v)
 
-    table = Table(title="📡 Доступные частоты", box=box.ROUNDED)
-    table.add_column("№", style="cyan", width=6)
-    table.add_column("Частота", style="green", width=15)
+    result = set_parameter(
+        options=options,
+        display_map=display_map,
+        get_current=get_current,
+        setter=setter,
+        description="Частота"
+    )
 
-    for i, freq in enumerate(freq_options, 1):
-        current = " ✅" if state.frequency == freq else ""
-        table.add_row(str(i), f"{freq} МГц{current}")
-
-    console.print(table)
-
-    while True:
-        try:
-            choice = Prompt.ask("[bold cyan]Выберите частоту[/bold cyan] (1-4)")
-            idx = int(choice) - 1
-            if 0 <= idx < len(freq_options):
-                freq = freq_options[idx]
-                args = create_args(port, frequency=freq)
-
-                def update():
-                    state.frequency = freq
-                    state.last_command_time = datetime.now().strftime("%H:%M:%S")
-
-                return execute_command_with_state(
-                    set_frequency_cmd, args, f"📡 Установка частоты {freq} МГц", update
-                )
-            else:
-                console.print("[red]❌ Неверный выбор[/red]")
-        except ValueError:
-            console.print("[red]❌ Введите число[/red]")
-        except KeyboardInterrupt:
-            return 1
+    if result == 0:
+        config = state.modem.read_configuration()
+        if config:
+            state.update_from_config(config)
+        state.last_command_time = datetime.now().strftime("%H:%M:%S")
+    return result
 
 
 def handle_set_mode(port: str):
-    """Установка режима с выбором"""
     global state
-
     if state.modem is None or not state.modem.protocol.transport.is_open:
         console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать конфигурацию'[/red]")
         return 1
 
-    mode_options = ["swarm+", "swarm", "longrange"]
+    options = ["swarm+", "swarm", "longrange"]
+    display_map = {m: m for m in options}
+    get_current = lambda: state.mode
+    setter = lambda v: state.modem.set_mode(v)
 
-    table = Table(title="🔧 Доступные режимы", box=box.ROUNDED)
-    table.add_column("№", style="cyan", width=6)
-    table.add_column("Режим", style="green", width=15)
+    result = set_parameter(
+        options=options,
+        display_map=display_map,
+        get_current=get_current,
+        setter=setter,
+        description="Режим"
+    )
 
-    for i, mode in enumerate(mode_options, 1):
-        current = " ✅" if state.mode == mode else ""
-        table.add_row(str(i), f"{mode}{current}")
-
-    console.print(table)
-
-    while True:
-        try:
-            choice = Prompt.ask("[bold cyan]Выберите режим[/bold cyan] (1-3)")
-            idx = int(choice) - 1
-            if 0 <= idx < len(mode_options):
-                mode = mode_options[idx]
-                args = create_args(port, mode=mode)
-
-                def update():
-                    state.mode = mode
-                    state.last_command_time = datetime.now().strftime("%H:%M:%S")
-
-                return execute_command_with_state(
-                    set_mode_cmd, args, f"🔧 Установка режима {mode}", update
-                )
-            else:
-                console.print("[red]❌ Неверный выбор[/red]")
-        except ValueError:
-            console.print("[red]❌ Введите число[/red]")
-        except KeyboardInterrupt:
-            return 1
+    if result == 0:
+        config = state.modem.read_configuration()
+        if config:
+            state.update_from_config(config)
+        state.last_command_time = datetime.now().strftime("%H:%M:%S")
+    return result
 
 
 def handle_set_rate(port: str):
-    """Установка скорости (rate)"""
     global state
-
     if state.modem is None or not state.modem.protocol.transport.is_open:
         console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать конфигурацию'[/red]")
         return 1
 
-    rate_options = [5, 10, 25, 40, 50]
+    options = [5, 10, 25, 40, 50]
+    display_map = {r: f"{r} Гц" for r in options}
+    get_current = lambda: state.link_rate
+    setter = lambda v: state.modem.set_rate(v)
 
-    table = Table(title="📊 Доступные скорости", box=box.ROUNDED)
-    table.add_column("№", style="cyan", width=6)
-    table.add_column("Скорость", style="green", width=15)
+    result = set_parameter(
+        options=options,
+        display_map=display_map,
+        get_current=get_current,
+        setter=setter,
+        description="Скорость"
+    )
 
-    for i, rate in enumerate(rate_options, 1):
-        current = " ✅" if state.link_rate == rate else ""
-        table.add_row(str(i), f"{rate} Гц{current}")
-
-    console.print(table)
-
-    while True:
-        try:
-            choice = Prompt.ask("[bold cyan]Выберите скорость[/bold cyan] (1-5)")
-            idx = int(choice) - 1
-            if 0 <= idx < len(rate_options):
-                rate = rate_options[idx]
-
-                # Используем прямой вызов через modem
-                result = state.modem.set_rate(rate)
-                if result:
-                    state.link_rate = rate
-                    state.last_command_time = datetime.now().strftime("%H:%M:%S")
-                    console.print(f"[green]✅ Скорость установлена на {rate} Гц[/green]")
-                    return 0
-                else:
-                    console.print("[red]❌ Не удалось установить скорость[/red]")
-                    return 1
-            else:
-                console.print("[red]❌ Неверный выбор[/red]")
-        except ValueError:
-            console.print("[red]❌ Введите число[/red]")
-        except KeyboardInterrupt:
-            return 1
+    if result == 0:
+        config = state.modem.read_configuration()
+        if config:
+            state.update_from_config(config)
+        state.last_command_time = datetime.now().strftime("%H:%M:%S")
+    return result
 
 
 def handle_set_protocol(port: str):
-    """Установка протокола"""
     global state
-
     if state.modem is None or not state.modem.protocol.transport.is_open:
         console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать конфигурацию'[/red]")
         return 1
 
-    protocol_options = ["crsf", "sbus", "mavlink", "raw"]
+    options = ["crsf", "sbus", "mavlink", "raw"]
+    display_map = {p: p for p in options}
+    get_current = lambda: state.protocol
+    setter = lambda v: state.modem.set_protocol(v)
 
-    table = Table(title="📡 Доступные протоколы", box=box.ROUNDED)
-    table.add_column("№", style="cyan", width=6)
-    table.add_column("Протокол", style="green", width=15)
+    result = set_parameter(
+        options=options,
+        display_map=display_map,
+        get_current=get_current,
+        setter=setter,
+        description="Протокол"
+    )
 
-    for i, protocol in enumerate(protocol_options, 1):
-        current = " ✅" if state.protocol == protocol else ""
-        table.add_row(str(i), f"{protocol}{current}")
-
-    console.print(table)
-
-    while True:
-        try:
-            choice = Prompt.ask("[bold cyan]Выберите протокол[/bold cyan] (1-4)")
-            idx = int(choice) - 1
-            if 0 <= idx < len(protocol_options):
-                protocol = protocol_options[idx]
-
-                result = state.modem.set_protocol(protocol)
-                if result:
-                    state.protocol = protocol
-                    state.last_command_time = datetime.now().strftime("%H:%M:%S")
-                    console.print(f"[green]✅ Протокол установлен на {protocol}[/green]")
-                    return 0
-                else:
-                    console.print("[red]❌ Не удалось установить протокол[/red]")
-                    return 1
-            else:
-                console.print("[red]❌ Неверный выбор[/red]")
-        except ValueError:
-            console.print("[red]❌ Введите число[/red]")
-        except KeyboardInterrupt:
-            return 1
+    if result == 0:
+        config = state.modem.read_configuration()
+        if config:
+            state.update_from_config(config)
+        state.last_command_time = datetime.now().strftime("%H:%M:%S")
+    return result
 
 
 def handle_set_fhss(port: str):
-    """Установка FHSS"""
     global state
-
     if state.modem is None or not state.modem.protocol.transport.is_open:
         console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать конфигурацию'[/red]")
         return 1
 
-    fhss_options = [0, 1, 2, 3, 4]
+    options = [0, 1, 2, 3, 4]
     fhss_desc = {
         0: "Выключен",
         1: "3.5, 4.0 ГГц",
@@ -402,50 +462,33 @@ def handle_set_fhss(port: str):
         3: "3.5, 4.5 ГГц",
         4: "3.5, 4.0, 4.5 ГГц",
     }
+    display_map = {m: f"{m} - {fhss_desc[m]}" for m in options}
+    get_current = lambda: state.fhss
+    setter = lambda v: state.modem.set_fhss_mode(v)
 
-    table = Table(title="📡 Доступные FHSS режимы", box=box.ROUNDED)
-    table.add_column("№", style="cyan", width=6)
-    table.add_column("Режим", style="green", width=25)
+    result = set_parameter(
+        options=options,
+        display_map=display_map,
+        get_current=get_current,
+        setter=setter,
+        description="FHSS"
+    )
 
-    for i, mode in enumerate(fhss_options, 1):
-        current = " ✅" if state.fhss == mode else ""
-        table.add_row(str(i), f"{mode} - {fhss_desc[mode]}{current}")
-
-    console.print(table)
-
-    while True:
-        try:
-            choice = Prompt.ask("[bold cyan]Выберите FHSS режим[/bold cyan] (1-5)")
-            idx = int(choice) - 1
-            if 0 <= idx < len(fhss_options):
-                mode = fhss_options[idx]
-
-                result = state.modem.set_fhss_mode(mode)
-                if result:
-                    state.fhss = mode
-                    state.last_command_time = datetime.now().strftime("%H:%M:%S")
-                    console.print(f"[green]✅ FHSS установлен на {mode} ({fhss_desc[mode]})[/green]")
-                    return 0
-                else:
-                    console.print("[red]❌ Не удалось установить FHSS[/red]")
-                    return 1
-            else:
-                console.print("[red]❌ Неверный выбор[/red]")
-        except ValueError:
-            console.print("[red]❌ Введите число[/red]")
-        except KeyboardInterrupt:
-            return 1
+    if result == 0:
+        config = state.modem.read_configuration()
+        if config:
+            state.update_from_config(config)
+        state.last_command_time = datetime.now().strftime("%H:%M:%S")
+    return result
 
 
 def handle_set_dsss(port: str):
-    """Установка DSSS"""
     global state
-
     if state.modem is None or not state.modem.protocol.transport.is_open:
         console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать конфигурацию'[/red]")
         return 1
 
-    dsss_options = [0, 1, 2, 3, 7]
+    options = [0, 1, 2, 3, 7]
     dsss_desc = {
         0: "Выключен",
         1: "16 MHz коды",
@@ -453,45 +496,28 @@ def handle_set_dsss(port: str):
         3: "16 и 64 MHz коды",
         7: "Все коды",
     }
+    display_map = {m: f"{m} - {dsss_desc[m]}" for m in options}
+    get_current = lambda: state.dsss
+    setter = lambda v: state.modem.set_dsss_mode(v)
 
-    table = Table(title="📡 Доступные DSSS режимы", box=box.ROUNDED)
-    table.add_column("№", style="cyan", width=6)
-    table.add_column("Режим", style="green", width=25)
+    result = set_parameter(
+        options=options,
+        display_map=display_map,
+        get_current=get_current,
+        setter=setter,
+        description="DSSS"
+    )
 
-    for i, mode in enumerate(dsss_options, 1):
-        current = " ✅" if state.dsss == mode else ""
-        table.add_row(str(i), f"{mode} - {dsss_desc[mode]}{current}")
-
-    console.print(table)
-
-    while True:
-        try:
-            choice = Prompt.ask("[bold cyan]Выберите DSSS режим[/bold cyan] (1-5)")
-            idx = int(choice) - 1
-            if 0 <= idx < len(dsss_options):
-                mode = dsss_options[idx]
-
-                result = state.modem.set_dsss_mode(mode)
-                if result:
-                    state.dsss = mode
-                    state.last_command_time = datetime.now().strftime("%H:%M:%S")
-                    console.print(f"[green]✅ DSSS установлен на {mode} ({dsss_desc[mode]})[/green]")
-                    return 0
-                else:
-                    console.print("[red]❌ Не удалось установить DSSS[/red]")
-                    return 1
-            else:
-                console.print("[red]❌ Неверный выбор[/red]")
-        except ValueError:
-            console.print("[red]❌ Введите число[/red]")
-        except KeyboardInterrupt:
-            return 1
+    if result == 0:
+        config = state.modem.read_configuration()
+        if config:
+            state.update_from_config(config)
+        state.last_command_time = datetime.now().strftime("%H:%M:%S")
+    return result
 
 
 def handle_set_pan(port: str):
-    """Установка адреса сети (PAN)"""
     global state
-
     if state.modem is None or not state.modem.protocol.transport.is_open:
         console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать конфигурацию'[/red]")
         return 1
@@ -523,9 +549,7 @@ def handle_set_pan(port: str):
 
 
 def handle_set_bind(port: str):
-    """Установка адреса управления (BIND)"""
     global state
-
     if state.modem is None or not state.modem.protocol.transport.is_open:
         console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать конфигурацию'[/red]")
         return 1
@@ -557,65 +581,49 @@ def handle_set_bind(port: str):
 
 
 def handle_toggle_led(port: str):
-    """Переключение LED"""
     global state
-
     if state.modem is None or not state.modem.protocol.transport.is_open:
         console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать конфигурацию'[/red]")
         return 1
 
-    args = create_args(port)
-
-    def update():
-        state.led_state = not state.led_state
-        state.last_command_time = datetime.now().strftime("%H:%M:%S")
-
-    return execute_command_with_state(
-        toggle_led_cmd, args, "💡 Переключение LED", update
+    result = set_parameter(
+        options=[],  # не используется
+        display_map={},
+        get_current=lambda: state.led_state,
+        setter=lambda: state.modem.toggle_led(),
+        description="LED",
+        mode="toggle"
     )
+
+    if result == 0:
+        config = state.modem.read_configuration()
+        if config:
+            state.update_from_config(config)
+        state.last_command_time = datetime.now().strftime("%H:%M:%S")
+    return result
 
 
 def handle_reboot(port: str):
-    """Перезагрузка модема"""
     global state
-
     if state.modem is None or not state.modem.protocol.transport.is_open:
-        console.print(
-            "[red]❌ Модем не подключен. Сначала выполните 'Перечитать конфигурацию'[/red]"
-        )
+        console.print("[red]❌ Модем не подключен. Сначала выполните 'Перечитать конфигурацию'[/red]")
         return 1
 
     if Confirm.ask("[yellow]⚠️  Перезагрузить модем?[/yellow]"):
-        args = create_args(port)
-
         try:
             result = state.modem.reboot()
-
             if result:
                 console.print("[green]✅ Модем перезагружен успешно[/green]")
-
-                # СОХРАНЯЕМ ВРЕМЯ ПЕРЕЗАГРУЗКИ
                 state.last_reboot_time = datetime.now().strftime("%H:%M:%S")
-
-                # После перезагрузки читаем конфигурацию
-                try:
-                    config = state.modem.read_configuration()
-                    if config:
-                        state.update_from_config(config)
-                        console.print("[green]✅ Конфигурация после перезагрузки получена[/green]")
-                    else:
-                        console.print(
-                            "[yellow]⚠️ Не удалось получить конфигурацию после перезагрузки[/yellow]"
-                        )
-                except Exception as e:
-                    console.print(f"[yellow]⚠️ Ошибка при чтении конфигурации: {e}[/yellow]")
-
+                config = state.modem.read_configuration()
+                if config:
+                    state.update_from_config(config)
+                    console.print("[green]✅ Конфигурация после перезагрузки получена[/green]")
                 state.last_command_time = datetime.now().strftime("%H:%M:%S")
                 return 0
             else:
                 console.print("[red]❌ Модем не перезагрузился[/red]")
                 return 1
-
         except Exception as e:
             console.print(f"[red]❌ Ошибка при перезагрузке: {e}[/red]")
             return 1
@@ -625,29 +633,16 @@ def handle_reboot(port: str):
 
 
 def handle_telemetry_monitor(port: str):
-    """Запуск мониторинга телеметрии"""
     global state
-
     console.print("[bold blue]📡 Запуск мониторинга телеметрии...[/bold blue]")
 
-    duration_str = Prompt.ask(
-        "⏱️ Длительность в секундах",
-        default="0",
-    )
+    duration_str = Prompt.ask("⏱️ Длительность в секундах", default="0")
     duration = float(duration_str) if duration_str != "0" else None
 
-    interval_str = Prompt.ask(
-        "🔄 Интервал обновления (сек)",
-        default="0.25",
-    )
+    interval_str = Prompt.ask("🔄 Интервал обновления (сек)", default="0.25")
     interval = float(interval_str) if interval_str else 0.25
 
-    config = TelemetryCliConfig(
-        port=port,
-        interval=interval,
-        duration=duration,
-    )
-
+    config = TelemetryCliConfig(port=port, interval=interval, duration=duration)
     cli = TelemetryCli(config)
     state.monitor_active = True
 
@@ -664,18 +659,14 @@ def handle_telemetry_monitor(port: str):
 
     input("\nНажмите Enter для продолжения...")
     console.clear()
+    return 0
 
 
 def handle_telemetry_collect(port: str):
-    """Сбор статистики телеметрии"""
     global state
-
     console.print("[bold blue]📊 Сбор статистики телеметрии...[/bold blue]")
 
-    duration_str = Prompt.ask(
-        "⏱️ Длительность сбора (сек)",
-        default="10",
-    )
+    duration_str = Prompt.ask("⏱️ Длительность сбора (сек)", default="10")
     duration = float(duration_str) if duration_str else 10.0
 
     config = TelemetryCliConfig(port=port)
@@ -687,46 +678,31 @@ def handle_telemetry_collect(port: str):
     signal.signal(signal.SIGINT, signal_handler)
 
     cli._running = True
-
-    # Подписываемся на обновление статистики
-    original_on_stat = cli._on_stat_update if hasattr(cli, '_on_stat_update') else None
-    def on_stat_update(collection):
-        state.stats_count = collection.uplink_lq.count if collection.uplink_lq else 0
-        state.last_command_time = datetime.now().strftime("%H:%M:%S")
-    cli._on_stat_update = on_stat_update
-
     cli.collect_stats(duration)
 
     state.last_command_time = datetime.now().strftime("%H:%M:%S")
-
     input("\nНажмите Enter для продолжения...")
     console.clear()
+    return 0
 
 
 def handle_telemetry_emulate(port: str):
-    """Эмуляция команд"""
     global state
-
     console.print("[bold blue]🎮 Эмуляция команд...[/bold blue]")
 
     channels_str = Prompt.ask(
         "📊 Введите каналы через запятую",
         default="1500,1500,1500,1500,1000,2000"
     )
-
     channels = parse_channels(channels_str)
     if not channels:
         console.print("[red]❌ Неверные каналы[/red]")
         input("\nНажмите Enter для продолжения...")
         console.clear()
-        return
+        return 1
 
-    frequency_str = Prompt.ask(
-        "📡 Частота отправки (Гц)",
-        default="10",
-    )
+    frequency_str = Prompt.ask("📡 Частота отправки (Гц)", default="10")
     frequency = float(frequency_str) if frequency_str else 10.0
-
     once = Confirm.ask("📤 Отправить один раз?")
 
     config = TelemetryCliConfig(port=port)
@@ -739,7 +715,7 @@ def handle_telemetry_emulate(port: str):
     signal.signal(signal.SIGINT, signal_handler)
 
     if once:
-        from serial_protocol.serial_transport import SerialTransport
+        from modem_test_platform.protocols.serial_protocol.serial_transport import SerialTransport
         from modem_test_platform.emulation import CommandEmulator
 
         transport = SerialTransport(port=port, baudrate=420000)
@@ -760,16 +736,13 @@ def handle_telemetry_emulate(port: str):
         state.emulation_active = False
 
     state.last_command_time = datetime.now().strftime("%H:%M:%S")
-
     input("\nНажмите Enter для продолжения...")
     console.clear()
+    return 0
 
 
 def change_port(port: str):
-    """Смена порта"""
     global state
-
-    # Отключаем текущий модем
     if state.modem is not None:
         try:
             state.modem.disconnect()
@@ -783,34 +756,82 @@ def change_port(port: str):
 
 
 def exit_program(port: str):
-    """Выход из программы"""
     global state
-
-    # Отключаем модем
     if state.modem is not None:
         try:
             state.modem.disconnect()
             console.print("[green]✅ Модем отключен[/green]")
         except Exception as e:
             console.print(f"[yellow]⚠️ Ошибка при отключении: {e}[/yellow]")
-
     console.print("\n[bold green]👋 До свидания![/bold green]")
     return 0
 
 
-# ========== Главное меню ==========
+def select_modem_interactive(modems: List[ModemInfo]) -> Optional[str]:
+    """Интерактивный выбор модема из списка."""
+    if not modems:
+        return None
+
+    # Сначала показываем найденные модемы
+    display_modems(modems)
+
+    # Предлагаем выбор
+    choices = [str(i) for i in range(1, len(modems) + 1)]
+    while True:
+        try:
+            choice = Prompt.ask(
+                "\n[bold cyan]Выберите номер модема для подключения[/bold cyan] (или 'q' для выхода)",
+                choices=choices + ["q"]
+            )
+            if choice.lower() == 'q':
+                console.print("[yellow]👋 Выход по запросу пользователя[/yellow]")
+                sys.exit(0)
+
+            idx = int(choice) - 1
+            if 0 <= idx < len(modems):
+                port = modems[idx].port
+                console.print(f"[green]✅ Выбран порт: {port} ({modems[idx].port_type})[/green]")
+                return port
+        except ValueError:
+            console.print("[red]❌ Пожалуйста, введите число[/red]")
+        except KeyboardInterrupt:
+            console.print("\n[yellow]👋 Выход по Ctrl+C[/yellow]")
+            sys.exit(0)
+
+
+# ============================================================
+#  ГЛАВНОЕ МЕНЮ
+# ============================================================
 
 def main():
-    """Интерактивное главное меню"""
     global state
 
     try:
-        # Сначала выбираем порт
-        port = get_port_from_user()
-        state.port = port
+        # 1. Сканируем порты
+        console.print("\n[bold blue]🔍 Сканирование портов...[/bold blue]")
+        modems = scan_ports()
 
-        # АВТОМАТИЧЕСКИ подключаемся и читаем конфигурацию
-        console.print("\n[bold blue]🔄 Автоматическое подключение и чтение конфигурации...[/bold blue]")
+        if modems:
+            # Модемы найдены — выбор из списка
+            port = select_modem_interactive(modems)
+        else:
+            # Модемы не найдены — ручной выбор
+            console.print("\n[yellow]⚠️ Модемы не обнаружены автоматически.[/yellow]")
+            console.print(
+                "[yellow]💡 Возможно, порт данных (420000 бод) не отвечает на команды.[/yellow]"
+            )
+            console.print(
+                "[yellow]   Вы можете выбрать порт вручную для работы с портом данных.[/yellow]\n"
+            )
+            port = select_port_manually()
+
+        if port is None:
+            return
+
+        # 2. Подключаемся к выбранному порту
+        state.port = port
+        console.print(f"\n[bold blue]🔄 Подключение к {port}...[/bold blue]")
+
         try:
             state.modem = get_modem(port)
             state.modem.connect()
@@ -823,20 +844,27 @@ def main():
                 state.last_command_time = datetime.now().strftime("%H:%M:%S")
             else:
                 console.print("[yellow]⚠️ Не удалось загрузить конфигурацию[/yellow]")
+                console.print(
+                    "[yellow]   Возможно, это порт данных (скорость 420000 бод).[/yellow]"
+                )
+                console.print(
+                    "[yellow]   Для управления модемом используйте порт конфигурации (115200 бод).[/yellow]"
+                )
         except Exception as e:
             console.print(f"[red]❌ Ошибка при подключении: {e}[/red]")
-            console.print("[yellow]⚠️ Некоторые команды могут быть недоступны. Используйте пункт 1 для перечитывания конфигурации.[/yellow]")
-
+            console.print("[yellow]⚠️ Некоторые команды могут быть недоступны.[/yellow]")
+            console.print(
+                "[yellow]   Проверьте, что вы подключились к порту конфигурации (115200 бод).[/yellow]"
+            )
+        # 4. Запускаем главное меню
         while True:
             print_header()
 
-            # Таблица команд с правой колонкой
             menu_table = Table(box=box.ROUNDED)
             menu_table.add_column("№", style="cyan", width=4)
             menu_table.add_column("Команда", style="white")
             menu_table.add_column("Текущее состояние", style="green", width=40)
 
-            # ОБНОВЛЕННОЕ МЕНЮ (без пункта 2, нумерация сдвинута)
             menu_items = [
                 ("1", "Перечитать конфигурацию", state.get_config_time_display()),
                 ("2", "Чтение состояния канала", state.get_stat_display()),
@@ -849,7 +877,7 @@ def main():
                 ("9", "Установка адреса сети (PAN)", state.get_pan_display()),
                 ("10", "Установка адреса управления (BIND)", state.get_bind_display()),
                 ("11", "Переключение LED", state.get_led_display()),
-                ("12", "Перезагрузка модема", state.get_reboot_display()),  # <-- ИЗМЕНЕНО
+                ("12", "Перезагрузка модема", state.get_reboot_display()),
                 ("13", "Телеметрия - мониторинг", state.get_monitor_display()),
                 ("14", "Телеметрия - сбор статистики", state.get_stats_display()),
                 ("15", "Телеметрия - эмуляция команд", state.get_emulation_display()),
@@ -865,13 +893,10 @@ def main():
             for num, desc, status in menu_items:
                 menu_table.add_row(num, desc, status)
 
-
-
             console.print(menu_table)
 
             choice = Prompt.ask("\n[bold cyan]👉 Выберите действие[/bold cyan]")
 
-            # ОБНОВЛЕННЫЙ СЛОВАРЬ ХЭНДЛЕРОВ (без пункта 2)
             handlers = {
                 "1": lambda: handle_read_config(port),
                 "2": lambda: handle_read_stat(port),
@@ -900,11 +925,10 @@ def main():
             handler = handlers.get(choice)
             if handler:
                 result = handler()
-                if choice == '16':  # Сменить порт (было 17)
+                if choice == '16':  # Сменить порт
                     if result:
                         port = result
                         state.port = port
-                        # После смены порта автоматически читаем конфигурацию
                         console.print("\n[bold blue]🔄 Загрузка конфигурации на новом порту...[/bold blue]")
                         try:
                             if state.modem is None:

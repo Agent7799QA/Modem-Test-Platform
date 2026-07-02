@@ -1,13 +1,17 @@
 """
 Состояние сессии для CLI меню.
 """
+import logging
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 from modem_test_platform.devices.modem.adapter.serial_adapter.serial_adapter import SerialAdapter
+from modem_test_platform.devices.modem.adapter.crsf_adapter import CRSFAdapter
 from modem_test_platform.devices.modem.modemconfiguration import ModemConfiguration
+
+logger = logging.getLogger(__name__)
 
 # ✅ Глобальный объект состояния
 state: Optional['SessionState'] = None
@@ -17,10 +21,14 @@ state: Optional['SessionState'] = None
 class SessionState:
     """Состояние сессии CLI."""
 
-    # Подключение
+    # Подключение (основной модем)
     port: str = ""
     modem: Optional[SerialAdapter] = None
     is_connected: bool = False
+
+    # CRSF адаптер для порта данных
+    crsf_adapter: Optional[CRSFAdapter] = None
+    data_port: Optional[str] = None  # Порт данных (обычно тот же, но с другой скоростью)
 
     # Параметры из print
     device_type: Optional[str] = None       # RX/TX
@@ -57,10 +65,19 @@ class SessionState:
     emulation_active: bool = False
     emulation_freq: float = 0.0
 
-    # dual connection
+    # ---- НОВЫЕ ПОЛЯ ДЛЯ DUAL-РЕЖИМА ----
     dual_connected: bool = False
     dual_tx_port: Optional[str] = None
     dual_rx_port: Optional[str] = None
+    tx_adapter: Optional[SerialAdapter] = None
+    rx_adapter: Optional[SerialAdapter] = None
+    tx_config: Optional[ModemConfiguration] = None
+    rx_config: Optional[ModemConfiguration] = None
+    sync_status: Optional[str] = None          # "synced", "partial", "none"
+    sync_params: Optional[List[str]] = None    # список синхронизированных параметров
+    last_sync_time: Optional[str] = None
+
+    # ---- МЕТОДЫ ----
 
     def update_from_config(self, config: ModemConfiguration) -> None:
         """Обновить состояние из конфигурации."""
@@ -103,25 +120,23 @@ class SessionState:
             self.downlink_rssi = link_state.downlink_rssi
             self.last_stat_time = datetime.now().strftime("%H:%M:%S")
 
+    # ----- Методы для отображения в меню -----
+
     def get_connection_status(self) -> str:
-        """Получить статус подключения."""
         if self.is_connected and self.modem:
             device = f" ({self.device_type})" if self.device_type else ""
             return f"🟢 Подключен{device}"
         return "🔴 Отключен"
 
     def get_frequency_display(self) -> str:
-        """Получить отображение частоты."""
         if self.frequency is not None:
             return f"{self.frequency} МГц"
         return "—"
 
     def get_mode_display(self) -> str:
-        """Получить отображение режима."""
         return self.mode if self.mode else "—"
 
     def get_led_display(self) -> str:
-        """Получить отображение LED."""
         if self.led_state is True:
             return "🟢 ON"
         elif self.led_state is False:
@@ -129,65 +144,54 @@ class SessionState:
         return "—"
 
     def get_rate_display(self) -> str:
-        """Получить отображение скорости."""
         if self.link_rate is not None:
             return f"{self.link_rate} Гц"
         return "—"
 
     def get_protocol_display(self) -> str:
-        """Получить отображение протокола."""
         return self.protocol if self.protocol else "—"
 
     def get_fhss_display(self) -> str:
-        """Получить отображение FHSS."""
         if self.fhss is not None:
             return str(self.fhss)
         return "—"
 
     def get_dsss_display(self) -> str:
-        """Получить отображение DSSS."""
         if self.dsss is not None:
             return str(self.dsss)
         return "—"
 
     def get_pan_display(self) -> str:
-        """Получить отображение PAN."""
         if self.network_address is not None:
             return str(self.network_address)
         return "—"
 
     def get_bind_display(self) -> str:
-        """Получить отображение BIND."""
         if self.bind_address is not None:
             return str(self.bind_address)
         return "—"
 
     def get_stat_display(self) -> str:
-        """Получить отображение состояния канала."""
         if self.uplink_lq is not None and self.uplink_rssi is not None:
             return f"LQ: {self.uplink_lq}% 📶 RSSI: {self.uplink_rssi} dBm"
         return "Нет данных"
 
     def get_config_time_display(self) -> str:
-        """Получить отображение времени чтения конфигурации."""
         if self.last_config_time:
             return f"✅ Выполнено ({self.last_config_time})"
         return "⏹ Не выполнялась"
 
     def get_stat_time_display(self) -> str:
-        """Получить отображение времени чтения состояния."""
         if self.last_stat_time:
             return f"✅ Выполнено ({self.last_stat_time})"
         return "⏹ Не выполнялась"
 
     def get_reboot_display(self) -> str:
-        """Отображение времени последней перезагрузки."""
         if self.last_reboot_time:
             return f"🔄 {self.last_reboot_time}"
         return "⏹ Не выполнялась"
 
     def get_monitor_display(self) -> str:
-        """Получить отображение статуса мониторинга."""
         if self.monitor_active:
             if self.monitor_lq is not None:
                 return f"📡 Активен (LQ: {self.monitor_lq}%)"
@@ -195,19 +199,16 @@ class SessionState:
         return "⏹ Остановлен"
 
     def get_stats_display(self) -> str:
-        """Получить отображение статуса сбора статистики."""
         if self.stats_count > 0:
             return f"📊 {self.stats_count} измерений"
         return "📊 0 измерений"
 
     def get_emulation_display(self) -> str:
-        """Получить отображение статуса эмуляции."""
         if self.emulation_active:
             return f"🎮 Активна ({self.emulation_freq:.0f} Гц)"
         return "⏹ Остановлена"
 
     def get_dual_status(self) -> str:
-        """Получить статус подключения двух модемов."""
         if self.dual_connected:
             return f"🟢 TX:{self.dual_tx_port} RX:{self.dual_rx_port}"
         return "🔴 Не подключены"

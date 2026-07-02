@@ -2,17 +2,17 @@
 Мониторинг RX порта данных с парсингом CRSF протокола.
 Адаптирован из старого rx_parser.py (убраны Qt-зависимости).
 """
-
+import logging
 from typing import Callable, Optional, Container, Dict, Any
 from dataclasses import dataclass
 
 from modem_test_platform.monitoring.base_monitor import BaseMonitor, MonitorConfig
-from crossfire.crsf_parser import (
+from modem_test_platform.protocols.crossfire.crsf_parser import (
     CRSFParser,
     PacketValidationStatus,
     PacketsTypes,
 )
-
+logger = logging.getLogger(__name__)
 
 @dataclass
 class LinkState:
@@ -60,6 +60,7 @@ class RxMonitor:
     def __init__(
             self,
             port_name: Optional[str] = None,
+            monitor: Optional[BaseMonitor] = None,   # <-- НОВЫЙ ПАРАМЕТР
             on_link_state: Callable[[LinkState], None] = None,
             on_frame: Callable[[Container, PacketValidationStatus], None] = None,
             on_status: Callable[[str], None] = None,
@@ -67,7 +68,8 @@ class RxMonitor:
     ):
         """
         Args:
-            port_name: Имя COM-порта
+            port_name: Имя COM-порта (если monitor не передан)
+            monitor: Внешний экземпляр BaseMonitor (если передан, port_name игнорируется)
             on_link_state: Callback при получении LINK_STATISTICS (LinkState)
             on_frame: Callback при любом валидном фрейме (frame, status)
             on_status: Callback при изменении статуса порта
@@ -80,20 +82,24 @@ class RxMonitor:
         # Создаем CRSF парсер с callback
         self._parser = CRSFParser(self._on_parsed_frame)
 
-        # Создаем базовый монитор
-        self._monitor = BaseMonitor(
-            port_name=port_name,
-            on_data=self._on_data_received,
-            on_status=on_status,
-            config=config or MonitorConfig(baudrate=420000),
-        )
+        # Если передан внешний монитор, используем его
+        if monitor is not None:
+            self._monitor = monitor
+            # Если задан port_name, но передан monitor, игнорируем port_name
+        else:
+            # Создаем свой монитор
+            self._monitor = BaseMonitor(
+                port_name=port_name,
+                on_data=self._on_data_received,
+                on_status=on_status,
+                config=config or MonitorConfig(baudrate=420000),
+            )
 
         # Статистика
         self._stats = RxMonitorStats()
 
     def _on_data_received(self, data: bytes) -> None:
         """Callback при получении данных из порта."""
-        # Передаем данные в CRSF парсер
         input_data = bytearray(data)
         try:
             self._parser.parse_stream(input_data)
@@ -106,10 +112,7 @@ class RxMonitor:
             print(f"Общая ошибка парсинга: {e}")
 
     def _on_parsed_frame(self, frame: Container, status: PacketValidationStatus) -> None:
-        """
-        Callback при распарсенном CRSF-фрейме.
-        Вызывается из CRSFParser.
-        """
+        """Callback при распарсенном CRSF-фрейме."""
         # Обновляем статистику
         if status == PacketValidationStatus.VALID:
             self._stats.valid_frames += 1
@@ -165,6 +168,10 @@ class RxMonitor:
                 print(f"Error parsing LINK_STATISTICS_EXTENDED: {e}")
 
     # ========== Прокси-методы ==========
+
+    def set_transport(self, transport) -> None:
+        """Установить внешний транспорт для монитора."""
+        self._monitor.set_transport(transport)
 
     def set_port(self, port_name: str) -> None:
         """Установить порт для мониторинга."""

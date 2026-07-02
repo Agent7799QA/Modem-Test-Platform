@@ -1,9 +1,12 @@
+import logging
 from typing import Any
 from crossfire.crsf_parser.frames import crsf_frame
 from crossfire.crsf_parser.payloads import (
     PacketsTypes,
     PAYLOADS_SIZE,
 )
+
+logger = logging.getLogger(__name__)
 
 _crc_tab = [
     0x00,

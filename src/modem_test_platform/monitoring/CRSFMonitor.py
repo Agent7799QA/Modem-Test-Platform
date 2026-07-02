@@ -1,7 +1,7 @@
 """
 Мониторинг порта данных с парсингом CRSF.
 """
-
+import logging
 from typing import Callable, Optional
 
 from modem_test_platform.protocols.serial_protocol.serial_transport import SerialTransport
@@ -9,7 +9,7 @@ from modem_test_platform.protocols.crossfire.crsf_parser import (
     CRSFParser,
     PacketValidationStatus,
 )
-
+logger = logging.getLogger(__name__)
 
 class CRSFMonitor:
     """Мониторинг порта данных с парсингом CRSF."""

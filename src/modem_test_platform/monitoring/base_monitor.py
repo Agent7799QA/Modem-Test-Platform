@@ -2,7 +2,7 @@
 Базовый класс для мониторинга порта данных.
 Адаптирован из старого parser_base.py (убраны Qt-зависимости).
 """
-
+import logging
 import time
 import threading
 import serial
@@ -13,7 +13,7 @@ from dataclasses import dataclass
 from serial import EIGHTBITS, PARITY_NONE, STOPBITS_ONE
 
 from modem_test_platform.protocols.serial_protocol.serial_transport import SerialTransport
-
+logger = logging.getLogger(__name__)
 
 @dataclass
 class MonitorConfig:
@@ -33,6 +33,7 @@ class BaseMonitor:
     Убраны Qt-зависимости (QThread, Signal, QMutex, QTimer).
 
     Использует стандартные threading.Thread и callback-функции.
+    Поддерживает как собственное управление портом, так и внешний транспорт.
     """
 
     def __init__(
@@ -44,7 +45,7 @@ class BaseMonitor:
     ):
         """
         Args:
-            port_name: Имя COM-порта
+            port_name: Имя COM-порта (если None, то должен быть передан транспорт через set_transport)
             on_data: Callback при получении данных (bytes)
             on_status: Callback при изменении статуса ("good" | "bad" | "closed")
             config: Конфигурация монитора
@@ -59,11 +60,12 @@ class BaseMonitor:
         self._thread: Optional[threading.Thread] = None
         self._lock = threading.Lock()
         self._serial_port: Optional[serial.Serial] = None
+        self._transport: Optional[SerialTransport] = None   # Внешний транспорт
         self._port_set = False
 
         # Для эмуляции команд (запись в порт)
         self._write_command: Optional[bytes] = None
-        self._write_interval: float = 0.0  # секунды
+        self._write_interval: float = 0.0
         self._write_timer: Optional[threading.Timer] = None
         self._is_writing = False
 
@@ -71,7 +73,7 @@ class BaseMonitor:
         self._retries = 0
         self._max_retries = 500000000
 
-        # Проверяем ОС для скорости
+        # Проверяем ОС для скорости (можно удалить позже, но пока оставим)
         self._check_os_baudrate()
 
     def _check_os_baudrate(self) -> None:
@@ -86,14 +88,50 @@ class BaseMonitor:
         except Exception as e:
             print(f"Error checking OS baudrate: {e}")
 
+    def set_transport(self, transport: SerialTransport) -> None:
+        """
+        Установить внешний транспорт вместо создания собственного порта.
+
+        Args:
+            transport: Объект SerialTransport (уже открытый или будет открыт позже)
+        """
+        with self._lock:
+            self._transport = transport
+            self._port_set = True
+            # Если порт уже был открыт через _serial_port, закрываем его
+            if self._serial_port and self._serial_port.is_open:
+                try:
+                    self._serial_port.close()
+                except:
+                    pass
+                self._serial_port = None
+
     def set_port(self, port_name: str) -> None:
-        """Установить порт для мониторинга."""
+        """Установить порт для мониторинга (если не используется внешний транспорт)."""
         with self._lock:
             self.port_name = port_name
             self._port_set = True
+            # Если был внешний транспорт, сбрасываем
+            self._transport = None
 
     def _open_port(self) -> Optional[serial.Serial]:
-        """Открыть порт для чтения данных."""
+        """Открыть порт для чтения данных. Если используется внешний транспорт, просто возвращаем None."""
+        # Если есть внешний транспорт, считаем порт открытым (предполагаем, что он уже открыт)
+        if self._transport is not None:
+            # Проверяем, открыт ли транспорт
+            if not self._transport.is_open:
+                try:
+                    self._transport.open()
+                except Exception as e:
+                    print(f"Failed to open transport: {e}")
+                    if self.on_status:
+                        self.on_status("bad")
+                    return None
+            if self.on_status:
+                self.on_status("good")
+            return None  # Не создаём свой serial
+
+        # Иначе создаём свой serial
         try:
             ser = serial.Serial(
                 port=self.port_name,
@@ -113,7 +151,14 @@ class BaseMonitor:
             return None
 
     def _close_port(self) -> None:
-        """Закрыть порт."""
+        """Закрыть порт. Если используется внешний транспорт, не закрываем его."""
+        if self._transport is not None:
+            # Не закрываем транспорт, он управляется снаружи
+            self._transport = None
+            if self.on_status:
+                self.on_status("closed")
+            return
+
         if self._serial_port and self._serial_port.is_open:
             try:
                 self._serial_port.close()
@@ -125,7 +170,16 @@ class BaseMonitor:
                     self.on_status("closed")
 
     def _read_data(self) -> bytes:
-        """Прочитать данные из порта."""
+        """Прочитать данные из порта (используя транспорт или serial)."""
+        if self._transport is not None:
+            if not self._transport.is_open:
+                return b""
+            try:
+                return self._transport.read(100)
+            except Exception as e:
+                print(f"Read error (transport): {e}")
+                return b""
+
         if not self._serial_port or not self._serial_port.is_open:
             return b""
         try:
@@ -139,10 +193,22 @@ class BaseMonitor:
         if not self._is_writing or not self._write_command:
             return
 
+        if self._transport is not None:
+            if not self._transport.is_open:
+                self._stop_writing()
+                return
+            try:
+                self._transport.write(self._write_command)
+            except Exception as e:
+                print(f"Write error (transport): {e}")
+                self._stop_writing()
+                if self.on_status:
+                    self.on_status("write_error")
+            return
+
         if not self._serial_port or not self._serial_port.is_open:
             self._stop_writing()
             return
-
         try:
             self._serial_port.write(self._write_command)
         except serial.SerialException as e:
@@ -201,14 +267,26 @@ class BaseMonitor:
             try:
                 # Если порт не установлен - ждем
                 with self._lock:
-                    if not self._port_set or not self.port_name:
+                    if not self._port_set:
                         time.sleep(0.1)
                         continue
 
                 # Открываем порт если закрыт
-                if self._serial_port is None or not self._serial_port.is_open:
+                if self._transport is None and (self._serial_port is None or not self._serial_port.is_open):
                     self._serial_port = self._open_port()
-                    if self._serial_port is None:
+                    if self._serial_port is None and self._transport is None:
+                        if self._retries >= self._max_retries:
+                            print("Maximum retries reached. Exiting.")
+                            break
+                        self._retries += 1
+                        time.sleep(0.05)
+                        continue
+
+                # Если есть транспорт, проверяем его состояние
+                if self._transport is not None and not self._transport.is_open:
+                    try:
+                        self._transport.open()
+                    except Exception:
                         if self._retries >= self._max_retries:
                             print("Maximum retries reached. Exiting.")
                             break
@@ -245,7 +323,7 @@ class BaseMonitor:
         self._running = True
         self._thread = threading.Thread(target=self._monitor_loop, daemon=True)
         self._thread.start()
-        print(f"Monitor started on port: {self.port_name}")
+        print(f"Monitor started on port: {self.port_name or 'external transport'}")
 
     def stop(self) -> None:
         """Остановить мониторинг."""
@@ -265,6 +343,8 @@ class BaseMonitor:
 
     def is_port_open(self) -> bool:
         """Проверить, открыт ли порт."""
+        if self._transport is not None:
+            return self._transport.is_open
         return self._serial_port is not None and self._serial_port.is_open
 
     def write(self, data: bytes) -> int:
@@ -274,6 +354,10 @@ class BaseMonitor:
         Returns:
             Количество записанных байт
         """
+        if self._transport is not None:
+            if not self._transport.is_open:
+                raise serial.SerialException("Transport is not open")
+            return self._transport.write(data)
         if not self._serial_port or not self._serial_port.is_open:
             raise serial.SerialException("Port is not open")
         return self._serial_port.write(data)

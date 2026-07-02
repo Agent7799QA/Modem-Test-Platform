@@ -2,16 +2,17 @@
 Эмуляция команд через CRSF протокол.
 Адаптирован из старого command_emulator.py (убраны Qt-зависимости).
 """
-
+import logging
 import time
 import threading
 from typing import List, Optional, Callable
 from dataclasses import dataclass
 
-from crossfire.crsf_parser.handling import crsf_build_frame
-from crossfire.crsf_parser.payloads import PacketsTypes
-from serial_protocol.serial_transport import SerialTransport
+from modem_test_platform.protocols.serial_protocol.serial_transport import SerialTransport
+from modem_test_platform.protocols.crossfire.crsf_parser.handling import crsf_build_frame
+from modem_test_platform.protocols.crossfire.crsf_parser.payloads import PacketsTypes
 
+logger = logging.getLogger(__name__)
 
 @dataclass
 class EmulationConfig:

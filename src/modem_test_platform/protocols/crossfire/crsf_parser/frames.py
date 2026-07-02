@@ -1,3 +1,5 @@
+import logging
+
 from construct import Byte, If, Struct, Const, Int8ub, Switch, Tell, this, Array, Select
 from crossfire.crsf_parser.payloads import (
     PacketsTypes,
@@ -21,6 +23,8 @@ from crossfire.crsf_parser.payloads import (
     payload_radio_id,
     GreedyBytes
 )
+
+logger = logging.getLogger(__name__)
 
 SYNC_RX_BYTE_BIN_STRING = b"\xc8"
 SYNC_TX_BYTE_BIN_STRING = b"\xea"

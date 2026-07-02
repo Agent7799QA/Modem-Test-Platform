@@ -1,3 +1,5 @@
+import logging
+
 from construct import (
     Array,
     BitStruct,
@@ -14,7 +16,7 @@ from construct import (
     GreedyBytes,
 )
 from construct.core import Struct
-
+logger = logging.getLogger(__name__)
 
 class PacketsTypes(Enum):
     GPS = 0x02

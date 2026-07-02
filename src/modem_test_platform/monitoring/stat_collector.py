@@ -2,15 +2,15 @@
 Сбор и анализ статистики по сигналам из CRSF-телеметрии.
 Адаптирован из старого stat_collector.py (убраны Qt-зависимости).
 """
-
+import logging
 import time
 import threading
 from typing import Dict, Any, Optional, Callable, List
 from dataclasses import dataclass, field
-from collections import defaultdict
-
 from modem_test_platform.monitoring.rx_monitor import LinkState
 from modem_test_platform.monitoring.rx_monitor import RxMonitor
+
+logger = logging.getLogger(__name__)
 
 @dataclass
 class StatData:

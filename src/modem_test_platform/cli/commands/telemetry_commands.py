@@ -1,13 +1,13 @@
 """
 CLI команды для работы с портом данных (CRSF телеметрия).
 """
-
+import logging
 import signal
 import time
 from dataclasses import dataclass
 from typing import List, Optional
 
-from modem_test_platform.monitoring.rx_monitor import RxMonitor, LinkState
+from modem_test_platform.monitoring.rx_monitor import LinkState
 from modem_test_platform.monitoring.stat_collector import StatCollector
 from modem_test_platform.ui.rich_dashboard import TelemetryDashboard, SimpleMonitorDisplay
 from modem_test_platform.ui.rich_utils import (
@@ -20,12 +20,10 @@ from modem_test_platform.ui.rich_utils import (
     create_progress_bar,
 )
 
-from modem_test_platform.emulation import CommandEmulator
-from serial_protocol.serial_transport import SerialTransport
+from modem_test_platform.devices.modem.adapter.crsf_adapter import CRSFAdapter
+from modem_test_platform.protocols.serial_protocol.serial_transport import SerialTransport
 
-
-# Убираем импорт get_modem - он не нужен для порта данных
-
+logger = logging.getLogger(__name__)
 
 @dataclass
 class TelemetryCliConfig:
@@ -39,19 +37,22 @@ class TelemetryCliConfig:
 
 
 class TelemetryCli:
-    """CLI для работы с телеметрией."""
+    """CLI для работы с телеметрией через CRSFAdapter."""
 
     def __init__(self, config: TelemetryCliConfig = None):
         self.config = config or TelemetryCliConfig()
         self._running = False
-        self._monitor: Optional[RxMonitor] = None
+        self._adapter: Optional[CRSFAdapter] = None
         self._collector: Optional[StatCollector] = None
-        self._emulator: Optional[CommandEmulator] = None
         self._dashboard: Optional[TelemetryDashboard] = None
         self._simple_display: Optional[SimpleMonitorDisplay] = None
 
     def _on_link_state(self, link: LinkState) -> None:
         """Callback при получении LinkState."""
+        if self._collector:
+            self._collector.add_sample(link)
+
+        # Обновление UI
         if self._dashboard and self._dashboard.is_running():
             self._dashboard.update(link, self._collector.get_collection() if self._collector else None)
         elif self._simple_display and self._simple_display._running:
@@ -89,32 +90,27 @@ class TelemetryCli:
             transport.open()
             print_success(f"Подключено к порту {self.config.port}")
 
-            self._monitor = RxMonitor(
-                port_name=self.config.port,
-                on_status=self._on_status,
-            )
-            self._monitor._monitor._serial_port = transport._serial
+            # Создаём адаптер
+            self._adapter = CRSFAdapter(transport)
 
+            # Создаём коллектор статистики
             self._collector = StatCollector()
-            self._monitor.on_link_state = self._collector.add_sample
 
+            # Запускаем мониторинг
+            self._adapter.start_monitoring(
+                on_link_state=self._on_link_state,
+                on_status=self._on_status
+            )
+
+            # Дашборд
             if self.config.dashboard:
                 self._dashboard = TelemetryDashboard(refresh_rate=self.config.interval)
                 self._dashboard.start()
-                self._monitor.on_link_state = lambda link: self._dashboard.update(
-                    link,
-                    self._collector.get_collection() if self._collector else None
-                )
             else:
                 self._simple_display = SimpleMonitorDisplay(refresh_rate=self.config.interval)
                 self._simple_display.start()
-                self._monitor.on_link_state = lambda link: self._simple_display.update(
-                    link,
-                    self._collector.get_collection() if self._collector else None
-                )
 
-            self._monitor.start()
-
+            # Ожидание
             if self.config.duration:
                 print_info(f"Сбор данных в течение {self.config.duration}с...")
                 with create_progress_bar(description="Сбор данных...") as progress:
@@ -133,15 +129,18 @@ class TelemetryCli:
             print("\n")
             print_warning("Остановка по Ctrl+C")
         finally:
+            # Остановка дашбордов
             if self._dashboard and self._dashboard.is_running():
                 self._dashboard.stop()
             if self._simple_display and self._simple_display._running:
                 self._simple_display.stop()
-            if self._monitor:
-                self._monitor.stop()
-            # serial_protocol.close()
-            # print_info("Отключено от порта")
 
+            # Остановка адаптера и закрытие транспорта
+            if self._adapter:
+                self._adapter.stop_monitoring()
+                self._adapter.close()
+
+            # Вывод финальной статистики
             if self._collector and not self._collector.is_empty():
                 console.print("\n" + "=" * 50)
                 console.print("[bold cyan]ФИНАЛЬНАЯ СТАТИСТИКА[/bold cyan]")
@@ -164,16 +163,13 @@ class TelemetryCli:
             transport.open()
             print_success(f"Подключено к порту {self.config.port}")
 
-            self._monitor = RxMonitor(
-                port_name=self.config.port,
-                on_status=self._on_status,
-            )
-            self._monitor._monitor._serial_port = transport._serial
-
+            self._adapter = CRSFAdapter(transport)
             self._collector = StatCollector()
-            self._monitor.on_link_state = self._collector.add_sample
 
-            self._monitor.start()
+            self._adapter.start_monitoring(
+                on_link_state=self._on_link_state,
+                on_status=self._on_status
+            )
 
             with create_progress_bar(description="Сбор данных...") as progress:
                 task = progress.add_task("", total=duration)
@@ -191,7 +187,6 @@ class TelemetryCli:
                         )
 
             print_success("Сбор данных завершен")
-
             console.print("\n" + "=" * 50)
             console.print("[bold cyan]ФИНАЛЬНАЯ СТАТИСТИКА[/bold cyan]")
             console.print("=" * 50)
@@ -201,13 +196,12 @@ class TelemetryCli:
         except KeyboardInterrupt:
             print_warning("Остановка по Ctrl+C")
         finally:
-            if self._monitor:
-                self._monitor.stop()
-            # serial_protocol.close()
-            # print_info("Отключено от порта")
+            if self._adapter:
+                self._adapter.stop_monitoring()
+                self._adapter.close()
 
     def emulate(self, channels: List[int], frequency_hz: float = 10.0) -> None:
-        """Эмуляция команд."""
+        """Эмуляция команд (периодическая отправка RC-каналов)."""
         print_header("ЭМУЛЯЦИЯ КОМАНД")
         print_info(f"Порт: {self.config.port}, частота: {frequency_hz} Гц")
         print_info(f"Каналы: {channels[:8]}... (всего {len(channels)})")
@@ -222,27 +216,45 @@ class TelemetryCli:
             transport.open()
             print_success(f"Подключено к порту {self.config.port}")
 
-            self._emulator = CommandEmulator(transport)
-            self._emulator.start_emulation(channels, frequency_hz)
+            self._adapter = CRSFAdapter(transport)
+            self._adapter.start_emulation(
+                channels=channels,
+                frequency_hz=frequency_hz,
+                on_status=lambda s: print_info(f"Статус эмуляции: {s}")
+            )
 
             print_info("Эмуляция запущена. Нажмите Ctrl+C для остановки.")
-
             with create_progress_bar(description="Отправка команд...") as progress:
                 task = progress.add_task("", total=None)
                 while self._running:
                     time.sleep(0.5)
-                    progress.update(
-                        task,
-                        description=f"Отправлено: {self._emulator.get_command_count()} команд"
-                    )
+                    if self._adapter and self._adapter.is_emulating():
+                        # Можно получить количество команд через эмулятор, но пока нет, просто обновляем
+                        progress.update(task, description="Отправка команд...")
 
         except KeyboardInterrupt:
             print_warning("Остановка по Ctrl+C")
         finally:
-            if self._emulator:
-                self._emulator.stop_emulation()
+            if self._adapter:
+                self._adapter.stop_emulation()
+                self._adapter.close()
+
+    def send_once(self, channels: List[int]) -> bool:
+        """Отправить одну команду (один CRSF-фрейм)."""
+        transport = SerialTransport(
+            port=self.config.port,
+            baudrate=self.config.baudrate,
+            timeout=self.config.timeout,
+        )
+        try:
+            transport.open()
+            adapter = CRSFAdapter(transport)
+            return adapter.send_rc_channels(channels)
+        except Exception as e:
+            print_error(f"Ошибка отправки: {e}")
+            return False
+        finally:
             transport.close()
-            print_info("Отключено от порта")
 
 
 # ========== Функции для argparse ==========
@@ -263,13 +275,11 @@ def parse_channels(channels_str: str) -> List[int]:
                 print(f"⚠️ Значение {value} вне диапазона 0-2047, игнорируем")
         except ValueError:
             print(f"⚠️ Неверное значение '{part}', игнорируем")
-
     return channels
 
 
 def add_telemetry_parser(subparsers):
     """Добавить парсеры для команд телеметрии."""
-
     parser_monitor = subparsers.add_parser(
         "monitor",
         help="Мониторинг телеметрии в реальном времени"
@@ -382,14 +392,11 @@ def cli_emulate(args):
     signal.signal(signal.SIGINT, signal_handler)
 
     if args.once:
-        transport = SerialTransport(port=args.port, baudrate=420000)
-        try:
-            transport.open()
-            emulator = CommandEmulator(transport)
-            emulator.send_once(channels)
+        success = cli.send_once(channels)
+        if success:
             print_success(f"Отправлено {len(channels)} каналов: {channels}")
-        finally:
-            transport.close()
+        else:
+            print_error("Не удалось отправить каналы")
     else:
         cli._running = True
         cli.emulate(channels, args.frequency)
