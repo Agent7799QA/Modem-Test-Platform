@@ -1,5 +1,5 @@
 """
-Modem Test Platform - CLI (Интерактивное меню с Rich)
+Modem Test Platform
 """
 
 import sys
@@ -42,10 +42,13 @@ from modem_test_platform.cli.session_state import get_state
 
 # Настройка логирования
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
+
 logger = logging.getLogger(__name__)
+
+
 
 # Rich консоль
 console = Console()
@@ -809,10 +812,15 @@ def main():
     try:
         # 1. Сканируем порты
         console.print("\n[bold blue]🔍 Сканирование портов...[/bold blue]")
+        logger.info("Начало сканирования портов")
+
         modems = scan_ports()
+        
+        logger.info(f"Результат сканирования: найдено {len(modems)} модемов")
 
         if modems:
-            # Модемы найдены — выбор из списка
+            for m in modems:
+                logger.info(f"  {m.port}: {m.port_type}")
             port = select_modem_interactive(modems)
         else:
             # Модемы не найдены — ручной выбор

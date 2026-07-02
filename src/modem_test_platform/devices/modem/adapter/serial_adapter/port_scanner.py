@@ -9,18 +9,18 @@ from typing import Dict, List, Optional, Tuple
 
 import serial.tools.list_ports
 
-
 from modem_test_platform.protocols.serial_protocol.exceptions import TransportConnectionError
 from modem_test_platform.devices.modem.adapter.serial_adapter.serial_adapter import SerialAdapter
 from modem_test_platform.devices.modem.modemconfiguration import ModemConfiguration
 from modem_test_platform.protocols.serial_protocol.serial_transport import SerialTransport
+from modem_test_platform.protocols.serial_protocol.serial_protocol import SerialProtocol  # ← ДОБАВИТЬ
 
 logger = logging.getLogger(__name__)
+
 
 @dataclass
 class ModemInfo:
     """Информация о найденном модеме."""
-
 
     port: str
     port_type: str  # "TX" или "RX"
@@ -43,7 +43,7 @@ class ModemInfo:
         return result
 
 
-def scan_ports(baudrate: int = 115200, timeout: float = 0.1) -> List[ModemInfo]:
+def scan_ports(baudrate: int = 115200, timeout: float = 0.3) -> List[ModemInfo]:
     """
     Найти все модемы на COM-портах.
 
@@ -84,35 +84,52 @@ def _scan_port(port: str, baudrate: int, timeout: float) -> Optional[ModemInfo]:
     adapter = None
     logger.debug(f"Сканирование {port} (baudrate={baudrate}, timeout={timeout})")
     try:
+        logger.debug(f"Создание транспорта для {port}")
         transport = SerialTransport(port=port, baudrate=baudrate, timeout=timeout)
-        adapter = SerialAdapter(transport)
+        # ← УДАЛИТЬ СТРОКУ: from serial_protocol import SerialProtocol
+        protocol = SerialProtocol(transport)  # ← теперь работает
+        logger.debug(f"Создание адаптера для {port}")
+        adapter = SerialAdapter(protocol)
 
         # Подключаемся
         adapter.connect()
+        logger.debug(f"Подключение к {port} выполнено")
 
         # 1. Отправляем help для проверки
         try:
             response = adapter.send_command("help", timeout=timeout)
-        except Exception:
-            adapter.disconnect()
+            logger.debug(f"Ответ от {port} (первые 200 символов): {response[:200]!r}")
+        except (TransportConnectionError, Exception) as e:
+            logger.warning(f"Ошибка при отправке help на {port}: {type(e).__name__}: {e}")
+            if adapter:
+                try:
+                    adapter.disconnect()
+                except:
+                    pass
             return None
 
         # 2. Проверяем, что это модем
         is_tx = "Drone RC (TX)" in response
         is_rx = "Drone RC (RX)" in response
+        logger.debug(f"{port}: is_tx={is_tx}, is_rx={is_rx}")
 
         if not is_tx and not is_rx:
+            logger.debug(f"{port}: не содержит 'Drone RC' в ответе")
             adapter.disconnect()
             return None
 
         port_type = "TX" if is_tx else "RX"
+        logger.info(f"{port}: определен как {port_type}")
 
         # 3. Извлекаем версию и SN
         version = _extract_version(response)
         serial_number = _extract_serial(response)
 
         # 4. Читаем конфигурацию
+        logger.debug(f"Чтение конфигурации для {port}")
         config = adapter.read_configuration()
+
+        logger.debug(f"Сканирование {port} завершено успешно")
 
         adapter.disconnect()
 
@@ -125,12 +142,15 @@ def _scan_port(port: str, baudrate: int, timeout: float) -> Optional[ModemInfo]:
             is_connected=True,
         )
 
-    except (TransportConnectionError, Exception):
+    except (TransportConnectionError, Exception) as e:
+        logger.error(f"Ошибка сканирования порта {port}: {type(e).__name__}: {e}")
+
         if adapter:
             try:
                 adapter.disconnect()
             except:
                 pass
+
         return None
 
 
@@ -178,12 +198,10 @@ def print_modems(modems: List[ModemInfo]) -> None:
         if info.serial_number:
             print(f"   SN: {info.serial_number}")
         if info.config:
-            # Исправлены имена полей
             params = []
             for key in ["frequency", "channel_code", "link_rate", "module_address", "bind_address"]:
                 val = getattr(info.config, key, None)
                 if val is not None:
-                    # Для красивого вывода используем сокращённые имена
                     display_key = {
                         "frequency": "freq",
                         "channel_code": "code",

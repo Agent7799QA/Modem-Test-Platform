@@ -4,28 +4,16 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f0b81956-eb59-4dfc-a4f8-65769f7a17fc" name="Changes" comment="v0.0.27403 minor change">
+    <list default="true" id="f0b81956-eb59-4dfc-a4f8-65769f7a17fc" name="Changes" comment="v0.0.27404 logging added">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/cli/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/devices/modem/adapter/crsf_adapter.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/cli/commands/sync_commands.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/cli/commands/sync_commands.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/cli/commands/telemetry_commands.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/cli/commands/telemetry_commands.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/modem_test_platform/cli/main_pyMenu.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/cli/main_pyMenu.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/cli/session_state.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/cli/session_state.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/devices/modem/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/devices/modem/adapter/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/devices/modem/adapter/serial_adapter/__init__.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/modem_test_platform/devices/modem/adapter/serial_adapter/port_scanner.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/devices/modem/adapter/serial_adapter/port_scanner.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/emulation/command_emulator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/emulation/command_emulator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/monitoring/CRSFMonitor.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/monitoring/CRSFMonitor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/monitoring/base_monitor.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/monitoring/base_monitor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/monitoring/rx_monitor.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/monitoring/rx_monitor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/monitoring/stat_collector.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/monitoring/stat_collector.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/protocols/crossfire/crsf_parser/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/protocols/crossfire/crsf_parser/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/protocols/crossfire/crsf_parser/frames.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/protocols/crossfire/crsf_parser/frames.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/protocols/crossfire/crsf_parser/handling.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/protocols/crossfire/crsf_parser/handling.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/protocols/crossfire/crsf_parser/payloads.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/protocols/crossfire/crsf_parser/payloads.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/protocols/serial_protocol/reconnect_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/protocols/serial_protocol/reconnect_config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/devices/modem/adapter/serial_adapter/serial_adapter.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/devices/modem/adapter/serial_adapter/serial_adapter.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/protocols/serial_protocol/__init__.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/modem_test_platform/protocols/serial_protocol/serial_transport.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/protocols/serial_protocol/serial_transport.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/tui/screens/config_screen.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/tui/screens/config_screen.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/tui/screens/monitor_screen.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/tui/screens/monitor_screen.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/modem_test_platform/tui/screens/stats_screen.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modem_test_platform/tui/screens/stats_screen.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,61 +50,61 @@
 }</component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.000000000000218" />
-      <entry key="MS500" value="1.0029358622618467" />
-      <entry key="S2" value="1.2327737049575573" />
-      <entry key="S5" value="1.558179095574193" />
-      <entry key="S10" value="1.7471138437990423" />
-      <entry key="S30" value="1.9079037396967027" />
-      <entry key="S60" value="1.9928298663105997" />
-      <entry key="M2" value="2.3665288802597413" />
-      <entry key="M5" value="3.6996195093206596" />
-      <entry key="M10" value="4.888428968904108" />
-      <entry key="M15" value="5.482569028191121" />
-      <entry key="M30" value="7.058386240749279" />
-      <entry key="H1" value="14.278647766111304" />
-      <entry key="H2" value="33.02784095971398" />
-      <entry key="H4" value="63.40106188550903" />
-      <entry key="D1" value="152.91345234448795" />
-      <entry key="W1" value="188.02399611116846" />
+      <entry key="MS100" value="3.3245729033935425E-95" />
+      <entry key="MS500" value="1.2828602192748688E-19" />
+      <entry key="S2" value="2.4677722669863626E-5" />
+      <entry key="S5" value="0.020934220005162627" />
+      <entry key="S10" value="0.20321860040785517" />
+      <entry key="S30" value="0.9425506946788477" />
+      <entry key="S60" value="1.484664721374462" />
+      <entry key="M2" value="2.291679640714432" />
+      <entry key="M5" value="4.759328658002245" />
+      <entry key="M10" value="7.642424843077933" />
+      <entry key="M15" value="9.345124538710538" />
+      <entry key="M30" value="12.360740816499746" />
+      <entry key="H1" value="19.901729649765965" />
+      <entry key="H2" value="38.529602645749094" />
+      <entry key="H4" value="69.08302562510664" />
+      <entry key="D1" value="159.99933024540292" />
+      <entry key="W1" value="195.86374624126995" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="0.0" />
-      <entry key="S2" value="0.0" />
-      <entry key="S5" value="0.0" />
-      <entry key="S10" value="0.0" />
-      <entry key="S30" value="7.640243044983714E-111" />
-      <entry key="S60" value="8.741063910163458E-56" />
-      <entry key="M2" value="2.98189739567513E-28" />
-      <entry key="M5" value="1.2540805805578583E-11" />
-      <entry key="M10" value="6.021472674364687E-6" />
-      <entry key="M15" value="5.069146133894175E-4" />
-      <entry key="M30" value="0.04441574514577073" />
-      <entry key="H1" value="0.4514323582651856" />
-      <entry key="H2" value="1.858325020208246" />
-      <entry key="H4" value="4.941832327943755" />
-      <entry key="D1" value="15.202610545686293" />
-      <entry key="W1" value="19.20887224817974" />
+      <entry key="MS100" value="1.0" />
+      <entry key="MS500" value="1.0" />
+      <entry key="S2" value="1.0000726589478357" />
+      <entry key="S5" value="1.0221062787434296" />
+      <entry key="S10" value="1.1486818036729098" />
+      <entry key="S30" value="1.5297682666450707" />
+      <entry key="S60" value="1.7278518164056957" />
+      <entry key="M2" value="1.8531423189630765" />
+      <entry key="M5" value="1.9384445014525273" />
+      <entry key="M10" value="1.9687360450717843" />
+      <entry key="M15" value="1.9793345332312606" />
+      <entry key="M30" value="2.02300718207459" />
+      <entry key="H1" value="2.387007834219542" />
+      <entry key="H2" value="3.729675560691907" />
+      <entry key="H4" value="6.770025700519601" />
+      <entry key="D1" value="17.11369611747341" />
+      <entry key="W1" value="21.1927910078275" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.870550563296314" />
-      <entry key="MS500" value="0.9755105283661918" />
-      <entry key="S2" value="1.224258314965461" />
-      <entry key="S5" value="1.5538648893100884" />
-      <entry key="S10" value="1.7446935077655856" />
-      <entry key="S30" value="1.9070189234788801" />
-      <entry key="S60" value="1.9921730886142028" />
-      <entry key="M2" value="2.3642449386005535" />
-      <entry key="M5" value="3.693152987778703" />
-      <entry key="M10" value="4.881906626730145" />
-      <entry key="M15" value="5.477554286894849" />
-      <entry key="M30" value="7.09912267264639" />
-      <entry key="H1" value="14.727185294907434" />
-      <entry key="H2" value="34.88347393880654" />
-      <entry key="H4" value="68.34058640448798" />
-      <entry key="D1" value="168.1152693588705" />
-      <entry key="W1" value="207.23273409364214" />
+      <entry key="MS100" value="1.86560100966197E-5" />
+      <entry key="MS500" value="0.11328274228341678" />
+      <entry key="S2" value="0.5801938384891265" />
+      <entry key="S5" value="0.8358087423259354" />
+      <entry key="S10" value="1.198963967365625" />
+      <entry key="S30" value="2.365125437816573" />
+      <entry key="S60" value="3.1418512119947732" />
+      <entry key="M2" value="4.102925590248866" />
+      <entry key="M5" value="6.677619242077382" />
+      <entry key="M10" value="9.59841328506243" />
+      <entry key="M15" value="11.314575128836008" />
+      <entry key="M30" value="14.377543899387094" />
+      <entry key="H1" value="22.284494036491242" />
+      <entry key="H2" value="42.25590093805515" />
+      <entry key="H4" value="75.85038828544276" />
+      <entry key="D1" value="177.11216485209292" />
+      <entry key="W1" value="217.05639271954857" />
     </decayedShown>
   </component>
   <component name="ProblemsViewState">
@@ -140,6 +128,7 @@
     &quot;Python tests.Python tests in modem_test.py.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests in test_crossfire_adapter.py.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests in test_link_state_parser.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python.app.executor&quot;: &quot;Run&quot;,
     &quot;Python.main (1).executor&quot;: &quot;Run&quot;,
     &quot;Python.main.executor&quot;: &quot;Run&quot;,
     &quot;Python.main_pyMenu.executor&quot;: &quot;Run&quot;,
@@ -184,7 +173,7 @@
     </key>
   </component>
   <component name="RunManager" selected="Python.main_pyMenu">
-    <configuration name="main (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="app" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ModemTestPlatform" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -193,14 +182,14 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/modem_test_platform" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/modem_test_platform/tui" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="DEBUG_JUST_MY_CODE" value="false" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="RUN_TOOL" value="" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/modem_test_platform/main.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/modem_test_platform/tui/app.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -234,40 +223,29 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests in modem_test.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="tui_main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ModemTestPlatform" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/modem_test_platform" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="DEBUG_JUST_MY_CODE" value="false" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="RUN_TOOL" value="" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;$PROJECT_DIR$/src/tests/modem_test.py&quot;" />
-      <option name="_new_targetType" value="&quot;PATH&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Python tests in test_crossfire_adapter.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="ModemTestPlatform" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="DEBUG_JUST_MY_CODE" value="false" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="RUN_TOOL" value="" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;$PROJECT_DIR$/src/tests/test_crossfire_adapter.py&quot;" />
-      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/modem_test_platform/tui_main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
     <configuration name="Python tests in test_link_state_parser.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
@@ -291,10 +269,9 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.main_pyMenu" />
+        <item itemvalue="Python.app" />
+        <item itemvalue="Python.tui_main" />
         <item itemvalue="Python tests.Python tests in test_link_state_parser.py" />
-        <item itemvalue="Python tests.Python tests in test_crossfire_adapter.py" />
-        <item itemvalue="Python tests.Python tests in modem_test.py" />
-        <item itemvalue="Python.main (1)" />
       </list>
     </recent_temporary>
   </component>
@@ -320,7 +297,7 @@
       <workItem from="1782829328975" duration="2965000" />
       <workItem from="1782887868912" duration="23387000" />
       <workItem from="1782974273173" duration="5890000" />
-      <workItem from="1782980187980" duration="11247000" />
+      <workItem from="1782980187980" duration="15003000" />
     </task>
     <task id="LOCAL-00001" summary="v0.0.27201 connect and get config">
       <option name="closed" value="true" />
@@ -450,7 +427,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782985391878</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="v0.0.27404 logging added">
+      <option name="closed" value="true" />
+      <created>1782993171084</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1782993171084</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -493,7 +478,8 @@
     <MESSAGE value="v0.0.27401 PyCli menu justified" />
     <MESSAGE value="v0.0.27402 import improvement" />
     <MESSAGE value="v0.0.27403 minor change" />
-    <option name="LAST_COMMIT_MESSAGE" value="v0.0.27403 minor change" />
+    <MESSAGE value="v0.0.27404 logging added" />
+    <option name="LAST_COMMIT_MESSAGE" value="v0.0.27404 logging added" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -513,11 +499,12 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/ModemTestPlatform$main.coverage" NAME="main Coverage Results" MODIFIED="1782892206895" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/modem_test_platform/cli" />
     <SUITE FILE_PATH="coverage/ModemTestPlatform$tui_main__1_.coverage" NAME="tui_main (1) Coverage Results" MODIFIED="1782892107268" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/modem_test_platform" />
-    <SUITE FILE_PATH="coverage/ModemTestPlatform$tui_main.coverage" NAME="tui_main Coverage Results" MODIFIED="1782891920206" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/ModemTestPlatform$tui_main.coverage" NAME="tui_main Coverage Results" MODIFIED="1782993297283" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/modem_test_platform" />
     <SUITE FILE_PATH="coverage/ModemTestPlatform$.coverage" NAME=" Coverage Results" MODIFIED="1782975697398" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
-    <SUITE FILE_PATH="coverage/ModemTestPlatform$main_pyMenu.coverage" NAME="main_pyMenu Coverage Results" MODIFIED="1782992807909" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/modem_test_platform/cli" />
+    <SUITE FILE_PATH="coverage/ModemTestPlatform$main_pyMenu.coverage" NAME="main_pyMenu Coverage Results" MODIFIED="1782996670785" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/modem_test_platform/cli" />
+    <SUITE FILE_PATH="coverage/ModemTestPlatform$app.coverage" NAME="app Coverage Results" MODIFIED="1782993489035" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/modem_test_platform/tui" />
     <SUITE FILE_PATH="coverage/ModemTestPlatform$modem_test.coverage" NAME="modem_test Coverage Results" MODIFIED="1782824182281" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/tests" />
     <SUITE FILE_PATH="coverage/ModemTestPlatform$test_crossfire_adapter.coverage" NAME="test_crossfire_adapter Coverage Results" MODIFIED="1782826520199" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/tests" />
-    <SUITE FILE_PATH="coverage/ModemTestPlatform$main__1_.coverage" NAME="main (1) Coverage Results" MODIFIED="1782895320363" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/modem_test_platform" />
+    <SUITE FILE_PATH="coverage/ModemTestPlatform$main__1_.coverage" NAME="main (1) Coverage Results" MODIFIED="1782993284725" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/modem_test_platform" />
   </component>
 </project>

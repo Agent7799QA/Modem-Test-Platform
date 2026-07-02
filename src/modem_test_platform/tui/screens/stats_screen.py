@@ -10,7 +10,8 @@ from textual.containers import Container, Vertical, Horizontal
 import time
 import threading
 
-from modem_test_platform.monitoring import RxMonitor, StatCollector, LinkState
+from modem_test_platform.monitoring.rx_monitor import RxMonitor, LinkState
+from modem_test_platform.monitoring.stat_collector import StatCollector
 from serial_protocol.serial_transport import SerialTransport
 from modem_test_platform.tui.widgets.telemetry_table import TelemetryTable
 from modem_test_platform.tui.widgets.status_indicator import StatusIndicator

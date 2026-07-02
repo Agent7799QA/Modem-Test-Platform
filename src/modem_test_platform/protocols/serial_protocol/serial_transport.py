@@ -24,6 +24,7 @@ class SerialTransport:
 
     def open(self) -> None:
         if self.is_open:
+            logger.debug(f"Порт {self.port} уже открыт")
             return
 
         try:
@@ -36,9 +37,8 @@ class SerialTransport:
             self.is_open = True
             logger.info(f"✅ Порт {self.port} открыт")
         except serial.SerialException as e:
+            logger.error(f"Ошибка открытия порта {self.port}: {type(e).__name__}: {e}")
             raise TransportConnectionError(f"Не удалось открыть порт {self.port}: {e}")
-        except OSError as e:
-            raise TransportConnectionError(f"Ошибка ОС при открытии порта {self.port}: {e}")
 
     def close(self) -> None:
         if self.serial and self.serial.is_open:
@@ -82,7 +82,7 @@ class SerialTransport:
                         continue
                     decoded = line.decode('utf-8', errors='ignore').strip()
                     lines.append(decoded)
-                    if decoded.endswith('> '):
+                    if decoded.endswith('..>'):
                         break
                 except serial.SerialException as e:
                     logger.error(f"Ошибка чтения: {e}")

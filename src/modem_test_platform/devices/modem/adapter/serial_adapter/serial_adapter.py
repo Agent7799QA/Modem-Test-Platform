@@ -19,7 +19,9 @@ class SerialAdapter:
         self.ttlstat_parser = TtlStatParser()
 
     def connect(self):
+        logger.debug(f"Вызов SerialAdapter.connect()")
         self.protocol.transport.open()
+        logger.debug(f"SerialAdapter.connect() завершен")
 
     def disconnect(self):
         self.protocol.transport.close()

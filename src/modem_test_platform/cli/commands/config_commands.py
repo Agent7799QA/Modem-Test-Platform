@@ -11,7 +11,7 @@ from modem_test_platform.protocols.serial_protocol.serial_transport import Seria
 logger = logging.getLogger(__name__)
 
 
-def get_modem(port: str, baudrate: int = 115200, timeout: float = 0.1) -> SerialAdapter:
+def get_modem(port: str, baudrate: int = 115200, timeout: float = 0.5) -> SerialAdapter:
     """Создать и вернуть адаптер модема для порта конфигурации."""
     transport = SerialTransport(port=port, baudrate=baudrate, timeout=timeout)
     protocol = SerialProtocol(transport)
