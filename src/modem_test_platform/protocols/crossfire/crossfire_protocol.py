@@ -106,7 +106,7 @@ class CrossfireProtocol:
                 logger.warning("Порт не открыт для проверки соединения")
                 return False
 
-            response = self.send_command("help", timeout=2.0)
+            response = self.send_command("help", timeout=0.1)
             return "Drone RC" in response
         except Exception as e:
             logger.warning(f"Ошибка проверки соединения: {e}")

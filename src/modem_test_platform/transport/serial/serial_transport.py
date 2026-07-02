@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 class SerialTransport:
     """Реализация транспорта через последовательный порт."""
 
-    def __init__(self, port: str, baudrate: int = 420000, timeout: float = 1.0):
+    def __init__(self, port: str, baudrate: int = 420000, timeout: float = 0.1):
         self.port = port
         self.baudrate = baudrate
         self.timeout = timeout

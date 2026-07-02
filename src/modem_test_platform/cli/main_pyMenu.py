@@ -96,13 +96,13 @@ def print_header():
     console.clear()
 
     panel = Panel(
-        "[bold cyan]📡 MODEM TEST PLATFORM[/bold cyan]\n"
-        "[white]Интерактивное управление[/white]",
+        "[bold cyan]📡 MODEM TEST PLATFORM[/bold cyan]\n[white]Интерактивное управление[/white]",
         border_style="cyan",
         box=box.DOUBLE,
+        width=80,  # Фиксированная ширина
     )
-    console.print(panel)
-    console.print()
+    console.print(panel,  justify="center")
+    # console.print()1
 
 
 def create_args(port: str, **kwargs):

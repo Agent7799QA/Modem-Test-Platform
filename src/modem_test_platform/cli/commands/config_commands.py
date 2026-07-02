@@ -12,7 +12,7 @@ from modem_test_platform.transport.serial.serial_transport import SerialTranspor
 logger = logging.getLogger(__name__)
 
 
-def get_modem(port: str, baudrate: int = 115200, timeout: float = 2.0) -> CrossfireAdapter:
+def get_modem(port: str, baudrate: int = 115200, timeout: float = 0.1) -> CrossfireAdapter:
     """Создать и вернуть адаптер модема для порта конфигурации."""
     transport = SerialTransport(port=port, baudrate=baudrate, timeout=timeout)
     protocol = CrossfireProtocol(transport)
