@@ -1,8 +1,7 @@
 import re
-import logging
 
-from crossfire.crossfire_protocol import logger
-from modem_test_platform.devices.configuration import Configuration
+
+from modem_test_platform.devices.modem.modemconfiguration import ModemConfiguration
 
 
 import logging
@@ -54,7 +53,7 @@ class PrintParser:
 
         return text[start:end]
 
-    def _parse_device_section(self, cfg: Configuration, section: str) -> None:
+    def _parse_device_section(self, cfg: ModemConfiguration, section: str) -> None:
         """Парсинг секции Device."""
         for line in section.splitlines():
             line = line.strip()
@@ -78,7 +77,7 @@ class PrintParser:
                 if value:
                     cfg.serial_number = value
 
-    def _parse_radio_section(self, cfg: Configuration, section: str) -> None:
+    def _parse_radio_section(self, cfg: ModemConfiguration, section: str) -> None:
         """Парсинг секции Radio."""
         cfg.mode = self._get_string(section, "Mode:").lower().replace(" ", "")
         cfg.link_rate = self._get_int(section, "Link rate:")
@@ -97,7 +96,7 @@ class PrintParser:
         cfg.max_clients = self._get_int(section, "Max clients:")
         cfg.ew_tests = self._get_bool(section, "EW tests:")
 
-    def _parse_serial_section(self, cfg: Configuration, section: str) -> None:
+    def _parse_serial_section(self, cfg: ModemConfiguration, section: str) -> None:
         """Парсинг секции Serial."""
         cfg.baudrate = self._get_int(section, "Baudrate:")
 
@@ -117,7 +116,7 @@ class PrintParser:
         elif "Inverted" in section:
             cfg.inverted = True
 
-    def _parse_protocol_section(self, cfg: Configuration, section: str) -> None:
+    def _parse_protocol_section(self, cfg: ModemConfiguration, section: str) -> None:
         """Парсинг секции Protocol."""
         for line in section.splitlines():
             line = line.strip()
@@ -129,7 +128,7 @@ class PrintParser:
             elif line.startswith("Preset:"):
                 cfg.preset = line.split(":", 1)[1].replace(".", "").strip()
 
-    def _parse_external_section(self, cfg: Configuration, section: str) -> None:
+    def _parse_external_section(self, cfg: ModemConfiguration, section: str) -> None:
         """Парсинг секции External Interface."""
         # Interface mode
         if "Interface mode:" in section:
@@ -147,8 +146,8 @@ class PrintParser:
             cfg.pin_1_mode = self._get_string(pin1_section, "Mode:")
             cfg.pin_1_dependency = self._get_int(pin1_section, "Dependency:")
 
-    def parse(self, response: str) -> Configuration:
-        cfg = Configuration(raw=response)
+    def parse(self, response: str) -> ModemConfiguration:
+        cfg = ModemConfiguration(raw=response)
 
         # Извлекаем секции
         device_section = self._extract_section(response, "", "Radio:")

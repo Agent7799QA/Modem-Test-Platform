@@ -7,7 +7,7 @@ from textual.screen import Screen
 from textual.widgets import Header, Footer, Button, Static, Input, Label
 from textual.containers import Container, Vertical, Horizontal
 
-import serial.tools.list_ports
+import serial_protocol.tools.list_ports
 
 
 class ConfigScreen(Screen):
@@ -20,7 +20,7 @@ class ConfigScreen(Screen):
             yield Static("🔌 Настройка порта", classes="panel-title")
 
             # Список портов
-            ports = [p.device for p in serial.tools.list_ports.comports()]
+            ports = [p.device for p in serial_protocol.tools.list_ports.comports()]
 
             if ports:
                 port_list = "\n".join([f"  {i + 1}. {p}" for i, p in enumerate(ports)])
@@ -45,7 +45,7 @@ class ConfigScreen(Screen):
                 # Проверяем, может быть это номер
                 try:
                     idx = int(port_input) - 1
-                    ports = [p.device for p in serial.tools.list_ports.comports()]
+                    ports = [p.device for p in serial_protocol.tools.list_ports.comports()]
                     if 0 <= idx < len(ports):
                         self.app.port = ports[idx]
                         self.notify(f"✅ Порт {self.app.port} выбран", severity="information")

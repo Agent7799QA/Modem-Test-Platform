@@ -2,13 +2,12 @@
 Состояние сессии для CLI меню.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
 
-from modem_test_platform.devices.adapters.crossfire.crossfire_adapter import CrossfireAdapter
-from modem_test_platform.devices.configuration import Configuration
-
+from modem_test_platform.devices.modem.adapter.serial_adapter.serial_adapter import SerialAdapter
+from modem_test_platform.devices.modem.modemconfiguration import ModemConfiguration
 
 # ✅ Глобальный объект состояния
 state: Optional['SessionState'] = None
@@ -20,7 +19,7 @@ class SessionState:
 
     # Подключение
     port: str = ""
-    modem: Optional[CrossfireAdapter] = None
+    modem: Optional[SerialAdapter] = None
     is_connected: bool = False
 
     # Параметры из print
@@ -58,7 +57,12 @@ class SessionState:
     emulation_active: bool = False
     emulation_freq: float = 0.0
 
-    def update_from_config(self, config: Configuration) -> None:
+    # dual connection
+    dual_connected: bool = False
+    dual_tx_port: Optional[str] = None
+    dual_rx_port: Optional[str] = None
+
+    def update_from_config(self, config: ModemConfiguration) -> None:
         """Обновить состояние из конфигурации."""
         if config.device_type:
             self.device_type = config.device_type
@@ -201,6 +205,12 @@ class SessionState:
         if self.emulation_active:
             return f"🎮 Активна ({self.emulation_freq:.0f} Гц)"
         return "⏹ Остановлена"
+
+    def get_dual_status(self) -> str:
+        """Получить статус подключения двух модемов."""
+        if self.dual_connected:
+            return f"🟢 TX:{self.dual_tx_port} RX:{self.dual_rx_port}"
+        return "🔴 Не подключены"
 
 
 # ✅ Инициализация глобального состояния

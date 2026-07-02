@@ -7,6 +7,8 @@ import time
 from dataclasses import dataclass
 from typing import List, Optional
 
+from modem_test_platform.monitoring.rx_monitor import RxMonitor, LinkState
+from modem_test_platform.monitoring.stat_collector import StatCollector
 from modem_test_platform.ui.rich_dashboard import TelemetryDashboard, SimpleMonitorDisplay
 from modem_test_platform.ui.rich_utils import (
     console,
@@ -19,8 +21,7 @@ from modem_test_platform.ui.rich_utils import (
 )
 
 from modem_test_platform.emulation import CommandEmulator
-from modem_test_platform.monitoring import RxMonitor, LinkState, StatCollector
-from modem_test_platform.transport.serial.serial_transport import SerialTransport
+from serial_protocol.serial_transport import SerialTransport
 
 
 # Убираем импорт get_modem - он не нужен для порта данных
@@ -138,7 +139,7 @@ class TelemetryCli:
                 self._simple_display.stop()
             if self._monitor:
                 self._monitor.stop()
-            # transport.close()
+            # serial_protocol.close()
             # print_info("Отключено от порта")
 
             if self._collector and not self._collector.is_empty():
@@ -202,7 +203,7 @@ class TelemetryCli:
         finally:
             if self._monitor:
                 self._monitor.stop()
-            # transport.close()
+            # serial_protocol.close()
             # print_info("Отключено от порта")
 
     def emulate(self, channels: List[int], frequency_hz: float = 10.0) -> None:

@@ -1,17 +1,17 @@
 import logging
-import time
-from typing import Optional, Callable
+from typing import Callable
 
-from modem_test_platform.devices.configuration import Configuration
+from modem_test_platform.devices.modem.modemconfiguration import ModemConfiguration
 from modem_test_platform.protocols.crossfire.commands import Commands
-from modem_test_platform.protocols.crossfire.parsers.print_parser import PrintParser
-from modem_test_platform.protocols.crossfire.parsers.stat_parser import StatParser
-from modem_test_platform.protocols.crossfire.parsers.ttlstat_parser import TtlStatParser
+from modem_test_platform.protocols.serial_protocol.parsers.print_parser import PrintParser
+from modem_test_platform.protocols.serial_protocol.parsers.stat_parser import StatParser
+from modem_test_platform.protocols.serial_protocol.parsers.ttlstat_parser import TtlStatParser
+
 
 logger = logging.getLogger(__name__)
 
 
-class CrossfireAdapter:
+class SerialAdapter:
     def __init__(self, protocol):
         self.protocol = protocol
         self.print_parser = PrintParser()
@@ -27,7 +27,7 @@ class CrossfireAdapter:
     def is_connected(self) -> bool:
         return self.protocol.transport.is_open
 
-    def read_configuration(self) -> Configuration:
+    def read_configuration(self) -> ModemConfiguration:
         response = self.protocol.send_command(Commands.PRINT)
         return self.print_parser.parse(response)
 

@@ -1,4 +1,4 @@
-from modem_test_platform.protocols.crossfire.parsers.stat_parser import (
+from parsers.stat_parser import (
     StatParser,
 )
 

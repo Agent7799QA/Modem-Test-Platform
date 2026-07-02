@@ -7,19 +7,21 @@ import time
 import threading
 import serial
 import platform
-from typing import Optional, Callable, List
+from typing import Optional, Callable
 from dataclasses import dataclass
 
-from modem_test_platform.transport.serial.serial_transport import SerialTransport
+from serial import EIGHTBITS, PARITY_NONE, STOPBITS_ONE
+
+from modem_test_platform.protocols.serial_protocol.serial_transport import SerialTransport
 
 
 @dataclass
 class MonitorConfig:
     """Конфигурация монитора."""
     baudrate: int = 420000
-    bytesize: int = serial.EIGHTBITS
-    parity: str = serial.PARITY_NONE
-    stopbits: int = serial.STOPBITS_ONE
+    bytesize: int = EIGHTBITS
+    parity: str = PARITY_NONE
+    stopbits: int = STOPBITS_ONE
     read_timeout: float = 0.1
 
 

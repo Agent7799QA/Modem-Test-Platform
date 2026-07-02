@@ -10,7 +10,7 @@ from textual.containers import Container, Vertical, Horizontal
 import threading
 import time
 
-from modem_test_platform.transport.serial.serial_transport import SerialTransport
+from serial_protocol.serial_transport import SerialTransport
 from modem_test_platform.emulation import CommandEmulator
 from modem_test_platform.cli.commands.telemetry_commands import parse_channels
 

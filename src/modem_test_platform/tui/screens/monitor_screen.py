@@ -6,14 +6,11 @@ from textual.app import ComposeResult
 from textual.screen import Screen
 from textual.widgets import Header, Footer, Button, Static, Label, Input
 from textual.containers import Container, Vertical, Horizontal
-from textual.reactive import reactive
-from rich.text import Text
 
 import time
-import threading
 
 from modem_test_platform.monitoring import RxMonitor, LinkState
-from modem_test_platform.transport.serial.serial_transport import SerialTransport
+from serial_protocol.serial_transport import SerialTransport
 from modem_test_platform.tui.widgets.telemetry_table import TelemetryTable
 from modem_test_platform.tui.widgets.status_indicator import StatusIndicator
 

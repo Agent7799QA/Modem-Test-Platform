@@ -2,8 +2,8 @@
 Диагностика подключения к модему
 """
 import time
-import serial
-import serial.tools.list_ports
+import serial_protocol
+import serial_protocol.tools.list_ports
 import logging
 
 logging.basicConfig(level=logging.DEBUG)
@@ -16,7 +16,7 @@ def test_connection(port: str, baudrate: int = 115200) -> None:
     logger.info(f"=== Тест подключения к {port} на скорости {baudrate} ===")
 
     try:
-        ser = serial.Serial(port, baudrate, timeout=2.0)
+        ser = serial_protocol.Serial(port, baudrate, timeout=2.0)
         #time.sleep(0.1)
 
         # Очистить буферы
@@ -59,7 +59,7 @@ def test_connection(port: str, baudrate: int = 115200) -> None:
 
 def list_ports() -> None:
     """Показать доступные порты."""
-    ports = serial.tools.list_ports.comports()
+    ports = serial_protocol.tools.list_ports.comports()
     logger.info("Доступные порты:")
     for p in ports:
         logger.info(f"  {p.device} - {p.description}")

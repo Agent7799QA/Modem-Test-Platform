@@ -3,7 +3,7 @@ from typing import Optional
 
 
 @dataclass
-class Configuration:
+class ModemConfiguration:
     """Конфигурация модема, получаемая по команде print."""
 
     # Device section

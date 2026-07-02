@@ -6,13 +6,12 @@ CRSF Parser - парсинг бинарного протокола Crossfire (CR
 __version__ = "1.0.0"
 
 from dataclasses import dataclass
-from typing import Any, Callable, Container
 
-from modem_test_platform.protocols.crsf_parser.frames import crsf_frame, SYNC_RX_BYTE, SYNC_TX_BYTE
+from crossfire.crsf_parser.frames import crsf_frame, SYNC_RX_BYTE, SYNC_TX_BYTE
 from enum import Enum
-from typing import Any, Callable, Container, Iterable, Tuple
-from modem_test_platform.protocols.crsf_parser.handling import crsf_frame_crc
-from modem_test_platform.protocols.crsf_parser.payloads import (
+from typing import Callable, Container, Iterable, Tuple
+from crossfire.crsf_parser.handling import crsf_frame_crc
+from crossfire.crsf_parser.payloads import (
     PacketsTypes,
     PAYLOADS_SIZE,
 )

@@ -8,9 +8,9 @@ import threading
 from typing import List, Optional, Callable
 from dataclasses import dataclass
 
-from modem_test_platform.protocols.crsf_parser.handling import crsf_build_frame
-from modem_test_platform.protocols.crsf_parser.payloads import PacketsTypes
-from modem_test_platform.transport.serial.serial_transport import SerialTransport
+from crossfire.crsf_parser.handling import crsf_build_frame
+from crossfire.crsf_parser.payloads import PacketsTypes
+from serial_protocol.serial_transport import SerialTransport
 
 
 @dataclass

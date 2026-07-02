@@ -4,10 +4,11 @@ Modem Test Platform - CLI (Интерактивное меню с Rich)
 
 import sys
 import logging
-import time
-import serial.tools.list_ports
 from datetime import datetime
 
+import serial
+
+import serial_protocol
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
@@ -19,8 +20,6 @@ from modem_test_platform.cli.commands import (
     set_frequency_cmd,
     set_mode_cmd,
     toggle_led_cmd,
-    reboot_cmd,
-    read_config_cmd,
     read_stat_cmd,
 )
 from modem_test_platform.cli.commands.telemetry_commands import (
@@ -28,9 +27,16 @@ from modem_test_platform.cli.commands.telemetry_commands import (
     TelemetryCliConfig,
     parse_channels,
 )
-from modem_test_platform.cli.session_state import SessionState
-from modem_test_platform.transport.exceptions import TransportConnectionError
-from modem_test_platform.cli.session_state import SessionState, get_state, set_state
+
+from modem_test_platform.cli.commands.sync_commands import (
+    cmd_scan_ports,
+    cmd_connect_dual,
+    cmd_sync_modems,
+    cmd_verify_link,
+    cmd_disconnect_dual,
+)
+from exceptions import TransportConnectionError
+from modem_test_platform.cli.session_state import get_state
 
 # Настройка логирования
 logging.basicConfig(
@@ -733,7 +739,7 @@ def handle_telemetry_emulate(port: str):
     signal.signal(signal.SIGINT, signal_handler)
 
     if once:
-        from modem_test_platform.transport.serial.serial_transport import SerialTransport
+        from serial_protocol.serial_transport import SerialTransport
         from modem_test_platform.emulation import CommandEmulator
 
         transport = SerialTransport(port=port, baudrate=420000)
@@ -848,11 +854,18 @@ def main():
                 ("14", "Телеметрия - сбор статистики", state.get_stats_display()),
                 ("15", "Телеметрия - эмуляция команд", state.get_emulation_display()),
                 ("16", "Сменить порт", state.port or "—"),
+                ("17", "Сканировать порты (TX/RX)", "🔍 Поиск модемов"),
+                ("18", "Подключиться к двум модемам", state.get_dual_status()),
+                ("19", "Синхронизировать TX→RX", "🔄 Синхронизация"),
+                ("20", "Проверить связь", "📡 Пинг модемов"),
+                ("21", "Отключить все модемы", "🔴 Отключить"),
                 ("0", "Выход", ""),
             ]
 
             for num, desc, status in menu_items:
                 menu_table.add_row(num, desc, status)
+
+
 
             console.print(menu_table)
 
@@ -860,23 +873,28 @@ def main():
 
             # ОБНОВЛЕННЫЙ СЛОВАРЬ ХЭНДЛЕРОВ (без пункта 2)
             handlers = {
-                '1': lambda: handle_read_config(port),
-                '2': lambda: handle_read_stat(port),
-                '3': lambda: handle_set_frequency(port),
-                '4': lambda: handle_set_mode(port),
-                '5': lambda: handle_set_rate(port),
-                '6': lambda: handle_set_protocol(port),
-                '7': lambda: handle_set_fhss(port),
-                '8': lambda: handle_set_dsss(port),
-                '9': lambda: handle_set_pan(port),
-                '10': lambda: handle_set_bind(port),
-                '11': lambda: handle_toggle_led(port),
-                '12': lambda: handle_reboot(port),
-                '13': lambda: handle_telemetry_monitor(port),
-                '14': lambda: handle_telemetry_collect(port),
-                '15': lambda: handle_telemetry_emulate(port),
-                '16': lambda: change_port(port),
-                '0': lambda: exit_program(port),
+                "1": lambda: handle_read_config(port),
+                "2": lambda: handle_read_stat(port),
+                "3": lambda: handle_set_frequency(port),
+                "4": lambda: handle_set_mode(port),
+                "5": lambda: handle_set_rate(port),
+                "6": lambda: handle_set_protocol(port),
+                "7": lambda: handle_set_fhss(port),
+                "8": lambda: handle_set_dsss(port),
+                "9": lambda: handle_set_pan(port),
+                "10": lambda: handle_set_bind(port),
+                "11": lambda: handle_toggle_led(port),
+                "12": lambda: handle_reboot(port),
+                "13": lambda: handle_telemetry_monitor(port),
+                "14": lambda: handle_telemetry_collect(port),
+                "15": lambda: handle_telemetry_emulate(port),
+                "16": lambda: change_port(port),
+                "17": lambda: cmd_scan_ports(),
+                "18": lambda: cmd_connect_dual(),
+                "19": lambda: cmd_sync_modems(),
+                "20": lambda: cmd_verify_link(),
+                "21": lambda: cmd_disconnect_dual(),
+                "0": lambda: exit_program(port),
             }
 
             handler = handlers.get(choice)
@@ -906,7 +924,7 @@ def main():
                         input("\n[yellow]Нажмите Enter для продолжения...[/yellow]")
                     console.clear()
             else:
-                console.print("[red]❌ Неверный выбор. Пожалуйста, выберите пункт от 0 до 16.[/red]")
+                console.print("[red]❌ Неверный выбор. Пожалуйста, выберите пункт от 0 до 21.[/red]")
                 input("Нажмите Enter для продолжения...")
                 console.clear()
 

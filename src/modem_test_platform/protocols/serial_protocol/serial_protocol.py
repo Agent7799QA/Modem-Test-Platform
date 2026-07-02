@@ -1,14 +1,13 @@
-import time
 import logging
 
-from modem_test_platform.transport.exceptions import TransportConnectionError
-from modem_test_platform.protocols.crossfire.reconnect_config import ReconnectConfig
-from modem_test_platform.transport.serial.serial_transport import SerialTransport
+from modem_test_platform.protocols.serial_protocol.exceptions import TransportConnectionError
+from modem_test_platform.protocols.serial_protocol.reconnect_config import ReconnectConfig
+from modem_test_platform.protocols.serial_protocol.serial_transport import SerialTransport
 
 logger = logging.getLogger(__name__)
 
 
-class CrossfireProtocol:
+class SerialProtocol:
     """Обмен текстовыми командами с модемом."""
 
     # Команды, которые не возвращают данные (пустой ответ = успех)

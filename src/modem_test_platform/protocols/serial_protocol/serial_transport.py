@@ -4,10 +4,13 @@ Serial транспорт для работы с COM-портом.
 
 import time
 import logging
+
 import serial
+
+import serial_protocol
 from typing import Optional
 
-from modem_test_platform.transport.exceptions import TransportConnectionError
+from modem_test_platform.protocols.serial_protocol.exceptions import TransportConnectionError
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +22,7 @@ class SerialTransport:
         self.port = port
         self.baudrate = baudrate
         self.timeout = timeout
-        self.serial: Optional[serial.Serial] = None
+        self.serial: Optional[serial_protocol.Serial] = None
         self.is_open = False
 
     def open(self) -> None:

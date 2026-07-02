@@ -42,7 +42,7 @@
   - `check_error()` — проверка ответа на ошибки
   - `verify_change()` — проверка изменения параметров через `print`
 - **Удалены лишние задержки** в `verify_change()` и `_toggle_parameter()` (команды применяются мгновенно)
-- **Переработана логика `CrossfireProtocol.send_command()`**:
+- **Переработана логика `SerialProtocol.send_command()`**:
   - Убрано автоматическое переподключение при пустом ответе
   - Добавлен список команд без данных (`COMMANDS_WITHOUT_DATA`)
   - Добавлен метод `reopen()` для переоткрытия порта после ребута
@@ -59,7 +59,7 @@
 - Ошибка "нет ответа" для команд без данных (`freq`, `mode`, `led`, и т.д.)
 - Обрезание SN в `PrintParser` — удаление символов `>` и пробелов
 - Парсинг `led_state` — добавлен в `PrintParser`
-- Конфликт имен `send_command()` в `CrossfireAdapter` и `CrossfireProtocol`
+- Конфликт имен `send_command()` в `CrossfireAdapter` и `SerialProtocol`
 - Импорт `time` в `config_commands.py`
 - Ошибка при смене режима (`mode`) — сравнение с учетом регистра
 

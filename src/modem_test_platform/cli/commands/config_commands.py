@@ -5,18 +5,17 @@ CLI команды для работы с портом конфигурации 
 import logging
 import time
 
-from modem_test_platform.devices.adapters.crossfire.crossfire_adapter import CrossfireAdapter
-from modem_test_platform.protocols.crossfire.crossfire_protocol import CrossfireProtocol
-from modem_test_platform.transport.serial.serial_transport import SerialTransport
-
+from modem_test_platform.devices.modem.adapter.serial_adapter.serial_adapter import SerialAdapter
+from modem_test_platform.protocols.serial_protocol.serial_protocol import SerialProtocol
+from modem_test_platform.protocols.serial_protocol.serial_transport import SerialTransport
 logger = logging.getLogger(__name__)
 
 
-def get_modem(port: str, baudrate: int = 115200, timeout: float = 0.1) -> CrossfireAdapter:
+def get_modem(port: str, baudrate: int = 115200, timeout: float = 0.1) -> SerialAdapter:
     """Создать и вернуть адаптер модема для порта конфигурации."""
     transport = SerialTransport(port=port, baudrate=baudrate, timeout=timeout)
-    protocol = CrossfireProtocol(transport)
-    modem = CrossfireAdapter(protocol)
+    protocol = SerialProtocol(transport)
+    modem = SerialAdapter(protocol)
     return modem
 
 

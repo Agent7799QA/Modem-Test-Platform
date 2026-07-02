@@ -4,8 +4,8 @@
 
 import pytest
 from unittest.mock import Mock, patch
-from modem_test_platform.devices.adapters.crossfire.crossfire_adapter import CrossfireAdapter
-from modem_test_platform.devices.configuration import Configuration
+from modem_test_platform.devices import CrossfireAdapter
+from modem_test_platform.devices import Configuration
 
 
 @pytest.fixture

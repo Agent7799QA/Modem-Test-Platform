@@ -1,7 +1,6 @@
 from typing import Any
-from construct import Checksum, Int8ub, Pointer, this
-from modem_test_platform.protocols.crsf_parser.frames import crsf_frame
-from modem_test_platform.protocols.crsf_parser.payloads import (
+from crossfire.crsf_parser.frames import crsf_frame
+from crossfire.crsf_parser.payloads import (
     PacketsTypes,
     PAYLOADS_SIZE,
 )

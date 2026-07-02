@@ -1,5 +1,5 @@
 from construct import Byte, If, Struct, Const, Int8ub, Switch, Tell, this, Array, Select
-from modem_test_platform.protocols.crsf_parser.payloads import (
+from crossfire.crsf_parser.payloads import (
     PacketsTypes,
     payload_battery_sensor,
     payload_heartbeat,

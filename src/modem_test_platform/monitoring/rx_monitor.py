@@ -4,17 +4,13 @@
 """
 
 from typing import Callable, Optional, Container, Dict, Any
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from modem_test_platform.monitoring.base_monitor import BaseMonitor, MonitorConfig
-from modem_test_platform.protocols.crsf_parser import (
+from crossfire.crsf_parser import (
     CRSFParser,
     PacketValidationStatus,
     PacketsTypes,
-)
-from modem_test_platform.protocols.crsf_parser.payloads import (
-    payload_link_statistics,
-    payload_link_statistics_extended,
 )
 
 

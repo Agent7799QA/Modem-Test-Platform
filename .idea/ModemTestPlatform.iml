@@ -3,8 +3,8 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/modem_test_platform/transport" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/modem_test_platform/protocols" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/modem_test_platform/protocols/serial_protocol" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/.venv" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.14 (ModemTestPlatform) (2)" jdkType="Python SDK" />
